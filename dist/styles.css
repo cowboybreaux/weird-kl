@@ -219,27 +219,35 @@ img { display: block; max-width: 100%; }
 }
 
 @media (max-width: 580px) {
+  html, body { overflow-x: hidden; }
   .announcement-bar { grid-template-columns: 1fr auto; padding-right: 14px; padding-left: 14px; }
   .announcement-center { display: none; }
   .announcement-bar > :last-child { text-align: right; }
   .site-header { min-height: 70px; }
   .header-actions { gap: 10px; font-size: 10px; }
   .icon-button { display: none; }
+  .cart-button { min-height: 40px; }
+  .menu-toggle { min-height: 40px; }
+  .search-inner { padding: 16px 20px; display: grid; grid-template-columns: 1fr auto; gap: 12px; }
+  .search-inner input { width: 100%; min-width: 0; grid-column: 1 / -1; grid-row: 2; }
+  .search-close { justify-self: end; }
   .hero { min-height: 690px; }
   .hero-media img { object-position: 65% center; }
   .hero-shade { background: linear-gradient(180deg, rgba(0,0,0,.22) 0%, rgba(0,0,0,.62) 66%, rgba(0,0,0,.86) 100%); }
   .hero-grid { padding-bottom: 94px; grid-template-columns: 1fr; }
-  .hero h1 { font-size: clamp(80px, 25vw, 140px); }
+  .hero h1 { font-size: clamp(68px, 23vw, 112px); letter-spacing: -.08em; }
   .hero-description { margin-top: 24px; font-size: 15px; }
   .hero-meta { display: none; }
-  .hero-tab { padding-right: 8px; font-size: 8px; }
+  .hero-tabs { overflow-x: auto; scrollbar-width: none; }
+  .hero-tabs::-webkit-scrollbar { display: none; }
+  .hero-tab { min-width: 150px; flex: 0 0 44%; padding-right: 8px; font-size: 8px; line-height: 1.25; }
   .manifesto-bar { grid-template-columns: 1fr auto; padding: 17px 20px; font-size: 9px; }
   .manifesto-bar p:nth-child(2) { display: none; }
   .manifesto-mark { justify-self: end; }
   .section, .journal-section { padding: 72px 20px; }
   .section-heading { display: block; margin-bottom: 36px; }
   .section-heading-aside { margin-top: 24px; }
-  .section h2, .journal-section h2 { font-size: clamp(54px, 17vw, 90px); }
+  .section h2, .journal-section h2 { font-size: clamp(48px, 15vw, 78px); letter-spacing: -.075em; }
   .filter-row { gap: 8px; overflow-x: auto; }
   .filter-button { white-space: nowrap; }
   .product-grid { column-gap: 8px; row-gap: 26px; }
@@ -252,15 +260,15 @@ img { display: block; max-width: 100%; }
   .category-card:hover { min-height: 210px; }
   .lookbook-section { padding-top: 0; padding-right: 20px; padding-left: 20px; }
   .lookbook-image-wrap { margin-right: -20px; margin-left: -20px; }
-  .lookbook-copy h2 { font-size: 66px; }
+  .lookbook-copy h2 { font-size: clamp(50px, 16vw, 66px); letter-spacing: -.08em; }
   .journal-grid { grid-template-columns: 1fr; }
   .journal-card-image { grid-column: auto; }
   .journal-card { min-height: 360px; }
   .about-section { padding: 72px 20px; }
-  .about-main h2 { font-size: 72px; }
+  .about-main h2 { font-size: clamp(50px, 15vw, 72px); letter-spacing: -.08em; }
   .site-footer { padding: 44px 20px 18px; }
   .footer-bottom { display: grid; grid-template-columns: 1fr auto; }
   .footer-links { grid-row: 2; grid-column: span 2; }
   .quick-view-body, .drawer-header, .cart-items, .cart-footer { padding-right: 20px; padding-left: 20px; }
-  .quick-view-body h2 { font-size: 50px; }
+  .quick-view-body h2 { font-size: clamp(44px, 14vw, 54px); }
 }
