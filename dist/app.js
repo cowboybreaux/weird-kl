@@ -1,18 +1,25 @@
 const products = [
-  { id: 'ws-01', name: 'WS-01 / Pink Polo', sleeve: 'Short sleeve', price: 289, image: './assets/products/wierd-ws-01.png', description: 'A bright pink short-sleeve top with a layered long-sleeve attitude and a Kuala Lumpur campus signal.' },
-  { id: 'ws-02', name: 'WS-02 / Pink Long Sleeve', sleeve: 'Long sleeve', price: 299, image: './assets/products/wierd-ws-02.png', description: 'A soft long-sleeve pink top with a crisp collar, built for warm streets and late plans.' },
-  { id: 'ws-03', name: 'WS-03 / Navy Polo', sleeve: 'Short sleeve', price: 289, image: './assets/products/wierd-ws-03.png', description: 'A deep navy short-sleeve top with bright contrast details and a clean athletic cut.' },
-  { id: 'ws-04', name: 'WS-04 / Navy Long Sleeve', sleeve: 'Long sleeve', price: 319, image: './assets/products/wierd-ws-04.png', description: 'A navy long-sleeve top with a relaxed body, contrast collar, and room to move.' }
+  { id: 'ws-01', name: 'WS-01 / Pink Polo — SS', sleeve: 'SS', price: 289, image: './assets/products/wierd-ws-01.png', description: 'A bright pink short-sleeve top with a layered long-sleeve attitude and a Kuala Lumpur campus signal.' },
+  { id: 'ws-02', name: 'WS-02 / Pink Polo — LS', sleeve: 'LS', price: 299, image: './assets/products/wierd-ws-02.png', description: 'A soft long-sleeve pink top with a crisp collar, built for warm streets and late plans.' },
+  { id: 'ws-03', name: 'WS-03 / Navy Polo — SS', sleeve: 'SS', price: 289, image: './assets/products/wierd-ws-03.png', description: 'A deep navy short-sleeve top with bright contrast details and a clean athletic cut.' },
+  { id: 'ws-04', name: 'WS-04 / Navy Polo — LS', sleeve: 'LS', price: 319, image: './assets/products/wierd-ws-04.png', description: 'A navy long-sleeve top with a relaxed body, contrast collar, and room to move.' }
 ];
 
 const heroStories = [
-  { video: './assets/teasers/teaser-01-ajib.mp4', poster: './assets/wierd-hero.png', label: 'Teaser 01 / Ajib', eyebrow: 'Drop 001 / Ajib', title: 'Nothing<br /><em>fits.</em>', description: 'A first look at the WIERD system in motion.' },
+  { video: './assets/teasers/teaser-01-ajib.mp4', poster: './assets/wierd-hero.png', label: 'Teaser 01 / Ajib', eyebrow: 'Drop 001 / Ajib', title: 'Keep it<br /><em>weird.</em>', description: 'A first look at the WIERD system in motion.' },
   { video: './assets/teasers/teaser-02-cahaya.mp4', poster: './assets/wierd-lookbook.png', label: 'Teaser 02 / Cahaya', eyebrow: 'Drop 001 / Cahaya', title: 'Wear the<br /><em>signal.</em>', description: 'Bright colour, hard lines, and a little room to be off-centre.' },
   { video: './assets/teasers/teaser-03-dayah.mp4', poster: './assets/wierd-still-life.png', label: 'Teaser 03 / Dayah', eyebrow: 'Drop 001 / Dayah', title: 'Made for<br /><em>the in-between.</em>', description: 'Four tops for the parts of the day that do not need a uniform.' },
-  { video: './assets/teasers/teaser-04-azi.mp4', poster: './assets/wierd-hero.png', label: 'Teaser 04 / Azi', eyebrow: 'Drop 001 / Azi', title: 'Keep it<br /><em>weird.</em>', description: 'A campaign in four movements, made in Kuala Lumpur.' }
+  { video: './assets/teasers/teaser-04-azi.mp4', poster: './assets/wierd-hero.png', label: 'Teaser 04 / Azi', eyebrow: 'Drop 001 / Azi', title: 'Stay<br /><em>off-centre.</em>', description: 'A campaign in four movements, made in Kuala Lumpur.' }
 ];
 
-const state = { cart: [], heroIndex: 0, quickViewId: null, selectedSize: 'S', reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches };
+const state = {
+  cart: [],
+  heroIndex: 0,
+  heroTimer: null,
+  quickViewId: null,
+  selectedSize: 'S',
+  reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+};
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 const money = (value) => `RM ${value.toFixed(2)}`;
@@ -33,24 +40,21 @@ function renderProducts() {
   `).join('');
 }
 
-function updateVideoToggle() {
-  const video = $('#hero-video');
-  const toggle = $('.video-toggle');
-  if (!video || !toggle) return;
-  const isPlaying = !video.paused && !video.ended;
-  toggle.textContent = isPlaying ? 'Pause' : 'Play';
-  toggle.setAttribute('aria-label', `${isPlaying ? 'Pause' : 'Play'} teaser`);
+function scheduleHeroRotation() {
+  window.clearInterval(state.heroTimer);
+  state.heroTimer = null;
+  if (state.reducedMotion) return;
+  state.heroTimer = window.setInterval(() => {
+    setHero((state.heroIndex + 1) % heroStories.length, { resetTimer: false });
+  }, 5000);
 }
 
 function showVideoFallback() {
-  const video = $('#hero-video');
-  const poster = $('#hero-image');
-  video.classList.add('is-fallback');
-  poster.classList.add('is-visible');
-  updateVideoToggle();
+  $('#hero-video').classList.add('is-fallback');
+  $('#hero-image').classList.add('is-visible');
 }
 
-function setHero(index) {
+function setHero(index, { resetTimer = true } = {}) {
   const story = heroStories[index];
   if (!story) return;
   state.heroIndex = index;
@@ -78,17 +82,17 @@ function setHero(index) {
     tab.classList.toggle('is-active', active);
     tab.setAttribute('aria-selected', String(active));
   });
-  updateVideoToggle();
+  if (resetTimer) scheduleHeroRotation();
 }
 
-function toggleVideo() {
-  const video = $('#hero-video');
-  if (video.paused) {
-    video.play().catch(showVideoFallback);
-  } else {
-    video.pause();
-  }
-  updateVideoToggle();
+function setMenuOpen(isOpen) {
+  const nav = $('#mobile-nav');
+  const toggle = $('.menu-toggle');
+  nav.classList.toggle('is-open', isOpen);
+  nav.setAttribute('aria-hidden', String(!isOpen));
+  nav.inert = !isOpen;
+  toggle.setAttribute('aria-expanded', String(isOpen));
+  toggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
 }
 
 function openPanel(panel) {
@@ -157,12 +161,7 @@ document.addEventListener('click', (event) => {
   if (!target) return;
   const action = target.dataset.action;
   if (target.dataset.heroTab) setHero(Number(target.dataset.heroTab));
-  if (action === 'menu') {
-    const nav = $('#mobile-nav');
-    nav.hidden = !nav.hidden;
-    target.setAttribute('aria-expanded', String(!nav.hidden));
-  }
-  if (action === 'toggle-video') toggleVideo();
+  if (action === 'menu') setMenuOpen(!$('#mobile-nav').classList.contains('is-open'));
   if (action === 'quick-view') openQuickView(target.dataset.productId);
   if (action === 'close-quick-view' || action === 'close-cart') closePanels();
   if (action === 'open-cart') { updateCart(); openPanel($('#cart-drawer')); }
@@ -188,23 +187,27 @@ $('#newsletter-form').addEventListener('submit', (event) => {
 $('#hero-video').addEventListener('canplay', () => {
   $('#hero-video').classList.remove('is-fallback');
   $('#hero-image').classList.remove('is-visible');
-  updateVideoToggle();
 });
 $('#hero-video').addEventListener('error', showVideoFallback);
-$('#hero-video').addEventListener('play', updateVideoToggle);
-$('#hero-video').addEventListener('pause', updateVideoToggle);
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') {
     closePanels();
-    $('#mobile-nav').hidden = true;
-    $('.menu-toggle').setAttribute('aria-expanded', 'false');
+    setMenuOpen(false);
   }
 });
-$$('.mobile-nav a').forEach((link) => link.addEventListener('click', () => {
-  $('#mobile-nav').hidden = true;
-  $('.menu-toggle').setAttribute('aria-expanded', 'false');
-}));
+$$('.mobile-nav a').forEach((link) => link.addEventListener('click', () => setMenuOpen(false)));
+window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener?.('change', (event) => {
+  state.reducedMotion = event.matches;
+  if (state.reducedMotion) {
+    window.clearInterval(state.heroTimer);
+    state.heroTimer = null;
+    $('#hero-video').pause();
+  } else {
+    setHero(state.heroIndex);
+  }
+});
 
 renderProducts();
 updateCart();
+setMenuOpen(false);
 setHero(0);

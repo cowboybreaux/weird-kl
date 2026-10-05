@@ -71,8 +71,6 @@ img { display: block; max-width: 100%; }
 .hero-tabs { position: absolute; z-index: 2; right: 5.5vw; bottom: 26px; left: 5.5vw; display: flex; gap: 0; border-top: 1px solid rgba(255,255,255,.35); }
 .hero-tab { flex: 1; padding: 13px 12px 7px 0; border: 0; border-top: 2px solid transparent; background: none; color: rgba(255,255,255,.56); text-align: left; font: 10px var(--mono); letter-spacing: .05em; text-transform: uppercase; }
 .hero-tab.is-active { border-top-color: var(--blue); color: var(--paper); }
-.video-toggle { position: absolute; z-index: 3; right: 5.5vw; bottom: 76px; min-width: 64px; min-height: 38px; padding: 0 11px; border: 1px solid rgba(255,255,255,.55); background: var(--blue); color: var(--paper); font: 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
-.video-toggle:hover { background: var(--acid); color: var(--ink); }
 
 .manifesto-bar { min-height: 70px; padding: 18px 32px; display: grid; grid-template-columns: 1fr 1fr auto; gap: 20px; align-items: center; border-bottom: 1px solid var(--line); background: var(--acid); font: 600 11px var(--mono); letter-spacing: .09em; }
 .manifesto-bar p { margin: 0; }
@@ -81,7 +79,7 @@ img { display: block; max-width: 100%; }
 
 .section { padding: clamp(70px, 9vw, 130px) 5.5vw; }
 .section-heading { display: flex; justify-content: space-between; gap: 30px; align-items: end; margin-bottom: 54px; }
-.section h2, .journal-section h2 { margin: 0; font: 600 clamp(48px, 7vw, 100px)/.85 var(--display); letter-spacing: -.085em; text-transform: uppercase; }
+.section h2 { margin: 0; font: 600 clamp(48px, 7vw, 100px)/.85 var(--display); letter-spacing: -.085em; text-transform: uppercase; }
 .section-heading-aside { max-width: 250px; font-size: 14px; }
 .section-heading-aside p { margin: 0 0 18px; }
 .product-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
@@ -98,28 +96,21 @@ img { display: block; max-width: 100%; }
 .product-name { font-weight: 600; }
 .product-meta { color: rgba(17,17,17,.58); font: 10px var(--mono); text-transform: uppercase; }
 .product-price { white-space: nowrap; font: 11px var(--mono); }
-.lookbook-section { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(300px, .95fr); gap: clamp(40px, 7vw, 110px); align-items: center; background: var(--bone); }
-.lookbook-image-wrap { position: relative; }
-.lookbook-image-wrap img { width: 100%; max-height: 780px; object-fit: cover; object-position: center 35%; }
-.image-caption { position: absolute; right: 12px; bottom: 12px; padding: 7px 9px; background: var(--acid); font: 10px var(--mono); letter-spacing: .07em; text-transform: uppercase; }
+.lookbook-section { display: grid; grid-template-columns: minmax(280px, .72fr) minmax(0, 1.28fr); gap: clamp(40px, 7vw, 110px); align-items: center; background: var(--blue); color: var(--paper); }
 .lookbook-copy { max-width: 460px; }
 .lookbook-copy h2 { margin-bottom: 30px; }
-.lookbook-copy h2 span { color: var(--blue); }
+.lookbook-copy h2 span { color: var(--acid); }
 .lookbook-copy > p:not(.eyebrow) { max-width: 340px; margin: 0 0 30px; font-size: 17px; }
+.lookbook-copy .button-dark { background: var(--ink); }
 .lookbook-index { margin-top: 70px; display: flex; gap: 12px; font: 11px var(--mono); }
-.lookbook-index span:first-child { color: var(--blue); }
-
-.journal-section { padding: clamp(70px, 9vw, 130px) 5.5vw; background: var(--paper); }
-.journal-heading { margin-bottom: 30px; }
-.journal-grid { display: grid; grid-template-columns: 1.15fr .925fr .925fr; gap: 12px; }
-.journal-card { min-height: 430px; padding: 23px; position: relative; overflow: hidden; }
-.journal-card-image { padding: 0; background: var(--ink); color: var(--paper); }
-.journal-card-image img { width: 100%; height: 100%; object-fit: cover; }
-.journal-card-overlay { position: absolute; right: 14px; bottom: 13px; left: 14px; display: flex; justify-content: space-between; font: 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
-.journal-card-orange { display: flex; flex-direction: column; background: var(--blue); color: var(--paper); }
-.journal-card-bone { display: flex; flex-direction: column; background: var(--bone); }
-.journal-card h3 { margin: auto 0 28px; font: 600 clamp(36px, 4.5vw, 67px)/.84 var(--display); letter-spacing: -.09em; text-transform: uppercase; }
-.journal-teaser { max-width: 230px; margin: 0 0 28px; font-size: 14px; }
+.lookbook-index span:first-child { color: var(--acid); }
+.lookbook-product-wall { display: grid; grid-template-columns: 1.08fr .92fr; grid-template-rows: repeat(2, minmax(230px, 1fr)); gap: 12px; min-height: 600px; }
+.fit-card { min-width: 0; min-height: 0; margin: 0; position: relative; overflow: hidden; background: var(--bone); }
+.fit-card-tall { grid-row: span 2; }
+.fit-card-offset { transform: translateY(24px); }
+.fit-card img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s cubic-bezier(.2,.7,.2,1); }
+.fit-card:hover img { transform: scale(1.04); }
+.fit-card figcaption { position: absolute; right: 10px; bottom: 10px; left: 10px; width: fit-content; padding: 7px 9px; background: var(--acid); color: var(--ink); font: 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
 
 .about-section { min-height: 590px; padding: clamp(70px, 9vw, 130px) 5.5vw; position: relative; display: grid; grid-template-columns: 1fr 2fr; gap: 40px; overflow: hidden; background: var(--ink); color: var(--paper); }
 .about-aside { margin: 0; font: 10px/1.7 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
@@ -183,16 +174,16 @@ img { display: block; max-width: 100%; }
   .desktop-nav { display: none; }
   .header-actions { gap: 14px; }
   .menu-toggle { display: block; }
-  .mobile-nav { padding: 22px 20px 28px; flex-direction: column; gap: 18px; border-bottom: 1px solid var(--line); background: var(--paper); font: 600 30px/.9 var(--display); letter-spacing: -.06em; text-transform: uppercase; }
-  .mobile-nav:not([hidden]) { display: flex; }
+  .mobile-nav { display: flex; max-height: 0; padding: 0 20px; flex-direction: column; gap: 18px; border-bottom: 1px solid transparent; background: var(--paper); font: 600 30px/.9 var(--display); letter-spacing: -.06em; text-transform: uppercase; overflow: hidden; opacity: 0; visibility: hidden; transform: translateY(-10px); pointer-events: none; transition: max-height .42s cubic-bezier(.2,.7,.2,1), padding .42s cubic-bezier(.2,.7,.2,1), border-color .25s ease, opacity .25s ease, transform .42s cubic-bezier(.2,.7,.2,1), visibility 0s linear .42s; }
+  .mobile-nav.is-open { max-height: 320px; padding: 22px 20px 28px; border-bottom-color: var(--line); opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; transition-delay: 0s; }
   .hero-grid { padding-right: 20px; padding-left: 20px; }
   .hero-tabs { right: 20px; left: 20px; }
   .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 28px; }
   .lookbook-section { grid-template-columns: 1fr; }
   .lookbook-copy { max-width: none; }
   .lookbook-index { margin-top: 35px; }
-  .journal-grid { grid-template-columns: 1fr 1fr; }
-  .journal-card-image { min-height: 380px; grid-column: span 2; }
+  .lookbook-product-wall { min-height: 560px; }
+  .fit-card-offset { transform: none; }
   .about-section { grid-template-columns: 1fr; min-height: 520px; }
   .about-aside { margin-bottom: 28px; }
   .footer-top { grid-template-columns: 1fr; padding-bottom: 50px; }
@@ -218,24 +209,21 @@ img { display: block; max-width: 100%; }
   .hero-tabs { overflow-x: auto; scrollbar-width: none; }
   .hero-tabs::-webkit-scrollbar { display: none; }
   .hero-tab { min-width: 150px; flex: 0 0 44%; padding-right: 8px; font-size: 8px; line-height: 1.25; }
-  .video-toggle { right: 20px; bottom: 82px; }
   .manifesto-bar { grid-template-columns: 1fr auto; padding: 17px 20px; font-size: 9px; }
   .manifesto-bar p:nth-child(2) { display: none; }
   .manifesto-mark { justify-self: end; }
-  .section, .journal-section { padding: 72px 20px; }
+  .section { padding: 72px 20px; }
   .section-heading { display: block; margin-bottom: 36px; }
   .section-heading-aside { margin-top: 24px; }
-  .section h2, .journal-section h2 { font-size: clamp(48px, 15vw, 78px); letter-spacing: -.075em; }
+  .section h2 { font-size: clamp(48px, 15vw, 78px); letter-spacing: -.075em; }
   .product-grid { column-gap: 8px; row-gap: 26px; }
   .product-info { display: block; }
   .product-price { display: block; margin-top: 7px; }
   .quick-view-trigger { opacity: 1; transform: none; }
-  .lookbook-section { padding-top: 0; padding-right: 20px; padding-left: 20px; }
-  .lookbook-image-wrap { margin-right: -20px; margin-left: -20px; }
+  .lookbook-section { padding: 72px 20px; }
   .lookbook-copy h2 { font-size: clamp(50px, 16vw, 66px); letter-spacing: -.08em; }
-  .journal-grid { grid-template-columns: 1fr; }
-  .journal-card-image { grid-column: auto; }
-  .journal-card { min-height: 360px; }
+  .lookbook-product-wall { min-height: 440px; grid-template-rows: repeat(2, minmax(180px, 1fr)); gap: 8px; }
+  .fit-card figcaption { right: 6px; bottom: 6px; left: 6px; padding: 6px 7px; font-size: 8px; }
   .about-section { padding: 72px 20px; }
   .about-main h2 { font-size: clamp(50px, 15vw, 72px); letter-spacing: -.08em; }
   .site-footer { padding: 44px 20px 18px; }
