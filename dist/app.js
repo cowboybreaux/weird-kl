@@ -82,12 +82,7 @@ function clearVideo(video) {
 }
 
 function updateHeroCopy(story, index) {
-  const copy = $('.hero-copy');
-  copy.classList.remove('is-switching');
-  void copy.offsetWidth;
-  copy.classList.add('is-switching');
   $('#hero-eyebrow').textContent = story.eyebrow;
-  $('#hero-title').innerHTML = story.title;
   $('#hero-description').textContent = story.description;
   $('#hero-index').textContent = `${String(index + 1).padStart(2, '0')} / ${String(heroStories.length).padStart(2, '0')}`;
   $$('.hero-tab').forEach((tab, tabIndex) => {
@@ -228,13 +223,24 @@ $$('.size-option').forEach((option) => option.addEventListener('click', () => {
   state.selectedSize = option.dataset.size;
   $$('.size-option').forEach((item) => item.classList.toggle('is-active', item === option));
 }));
-$('#newsletter-form').addEventListener('submit', (event) => {
-  event.preventDefault();
-  const email = $('#newsletter-email').value.trim();
-  if (!email) return;
-  $('#form-message').textContent = 'You’re on the list. See you on the weird side.';
-  event.target.reset();
-});
+
+const announcementBar = $('.announcement-bar');
+const siteHeader = $('.site-header');
+let scrollFrame = null;
+function updateScrollChrome() {
+  const isScrolled = window.scrollY > 12;
+  announcementBar.classList.toggle('is-scrolled', isScrolled);
+  siteHeader.classList.toggle('is-scrolled', isScrolled);
+}
+window.addEventListener('scroll', () => {
+  if (scrollFrame !== null) return;
+  scrollFrame = window.requestAnimationFrame(() => {
+    scrollFrame = null;
+    updateScrollChrome();
+  });
+}, { passive: true });
+updateScrollChrome();
+
 $$('.hero-video').forEach((video) => {
   video.addEventListener('canplay', () => {
     if (video === getVideo()) {
