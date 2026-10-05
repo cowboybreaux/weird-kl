@@ -6,10 +6,10 @@ const products = [
 ];
 
 const heroStories = [
-  { video: './assets/teasers/teaser-01-ajib.mp4', poster: './assets/wierd-hero.png', label: 'Teaser 01 / Ajib', eyebrow: 'Drop 001 / Ajib', title: 'Keep it<br /><em>weird.</em>', description: 'A first look at the WIERD system in motion.' },
-  { video: './assets/teasers/teaser-02-cahaya.mp4', poster: './assets/wierd-lookbook.png', label: 'Teaser 02 / Cahaya', eyebrow: 'Drop 001 / Cahaya', title: 'Wear the<br /><em>signal.</em>', description: 'Bright colour, hard lines, and a little room to be off-centre.' },
-  { video: './assets/teasers/teaser-03-dayah.mp4', poster: './assets/wierd-still-life.png', label: 'Teaser 03 / Dayah', eyebrow: 'Drop 001 / Dayah', title: 'Made for<br /><em>the in-between.</em>', description: 'Four tops for the parts of the day that do not need a uniform.' },
-  { video: './assets/teasers/teaser-04-azi.mp4', poster: './assets/wierd-hero.png', label: 'Teaser 04 / Azi', eyebrow: 'Drop 001 / Azi', title: 'Stay<br /><em>off-centre.</em>', description: 'A campaign in four movements, made in Kuala Lumpur.' }
+  { video: './assets/teasers/teaser-01-ajib.mp4', poster: './assets/products/wierd-ws-01.png', label: 'Teaser 01 / Ajib', eyebrow: 'Drop 001 / Ajib', title: 'Keep it<br /><em>weird.</em>', description: 'A first look at the WIERD system in motion.' },
+  { video: './assets/teasers/teaser-02-cahaya.mp4', poster: './assets/products/wierd-ws-02.png', label: 'Teaser 02 / Cahaya', eyebrow: 'Drop 001 / Cahaya', title: 'Wear the<br /><em>signal.</em>', description: 'Bright colour, hard lines, and a little room to be off-centre.' },
+  { video: './assets/teasers/teaser-03-dayah.mp4', poster: './assets/products/wierd-ws-03.png', label: 'Teaser 03 / Dayah', eyebrow: 'Drop 001 / Dayah', title: 'Made for<br /><em>the in-between.</em>', description: 'Four tops for the parts of the day that do not need a uniform.' },
+  { video: './assets/teasers/teaser-04-azi.mp4', poster: './assets/products/wierd-ws-04.png', label: 'Teaser 04 / Azi', eyebrow: 'Drop 001 / Azi', title: 'Stay<br /><em>off-centre.</em>', description: 'A campaign in four movements, made in Kuala Lumpur.' }
 ];
 
 const state = {
