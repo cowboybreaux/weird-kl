@@ -45,14 +45,17 @@ img { display: block; max-width: 100%; }
 
 .hero { min-height: min(760px, calc(100vh - 110px)); position: relative; color: var(--paper); background: var(--ink); }
 .hero-media, .hero-shade { position: absolute; inset: 0; }
-.hero-media img, .hero-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; transition: opacity .35s ease; }
+.hero-media img, .hero-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
 .hero-media img { opacity: 0; }
 .hero-media img.is-visible { opacity: 1; }
+.hero-media video { z-index: 1; opacity: 0; transition: opacity .78s cubic-bezier(.2,.7,.2,1); }
+.hero-media video.is-active { opacity: 1; }
 .hero-media video.is-fallback { opacity: 0; }
-.hero-shade { background: linear-gradient(90deg, rgba(0,0,0,.8) 0%, rgba(0,0,0,.34) 44%, rgba(0,0,0,.12) 100%); }
-.hero-grid { min-height: inherit; position: relative; z-index: 1; padding: clamp(30px, 6vw, 84px) 5.5vw 80px; display: grid; grid-template-columns: 1fr auto; align-items: end; }
+.hero-shade { z-index: 2; background: linear-gradient(90deg, rgba(0,0,0,.8) 0%, rgba(0,0,0,.34) 44%, rgba(0,0,0,.12) 100%); }
+.hero-grid { min-height: inherit; position: relative; z-index: 3; padding: clamp(30px, 6vw, 84px) 5.5vw 80px; display: grid; grid-template-columns: 1fr auto; align-items: end; }
 .eyebrow { margin: 0 0 14px; font: 10px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
 .hero-copy { max-width: 570px; }
+.hero-copy.is-switching { animation: hero-copy-in .6s cubic-bezier(.2,.7,.2,1) both; }
 .hero h1 { margin: 0; font: 600 clamp(78px, 13vw, 190px)/.75 var(--display); letter-spacing: -.1em; text-transform: uppercase; }
 .hero h1 em { color: var(--blue); font-style: normal; }
 .hero-description { max-width: 300px; margin: 34px 0 24px; font-size: 17px; }
@@ -68,9 +71,10 @@ img { display: block; max-width: 100%; }
 .light-link { color: var(--paper); }
 .light-link span { color: var(--blue); }
 .hero-meta { display: grid; gap: 9px; justify-items: end; align-self: center; font: 10px var(--mono); letter-spacing: .1em; text-transform: uppercase; transform: rotate(-90deg) translateX(28px); transform-origin: right bottom; white-space: nowrap; }
-.hero-tabs { position: absolute; z-index: 2; right: 5.5vw; bottom: 26px; left: 5.5vw; display: flex; gap: 0; border-top: 1px solid rgba(255,255,255,.35); }
+.hero-tabs { position: absolute; z-index: 4; right: 5.5vw; bottom: 26px; left: 5.5vw; display: flex; gap: 0; border-top: 1px solid rgba(255,255,255,.35); }
 .hero-tab { flex: 1; padding: 13px 12px 7px 0; border: 0; border-top: 2px solid transparent; background: none; color: rgba(255,255,255,.56); text-align: left; font: 10px var(--mono); letter-spacing: .05em; text-transform: uppercase; }
 .hero-tab.is-active { border-top-color: var(--blue); color: var(--paper); }
+@keyframes hero-copy-in { from { opacity: .18; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
 .manifesto-bar { min-height: 70px; padding: 18px 32px; display: grid; grid-template-columns: 1fr 1fr auto; gap: 20px; align-items: center; border-bottom: 1px solid var(--line); background: var(--acid); font: 600 11px var(--mono); letter-spacing: .09em; }
 .manifesto-bar p { margin: 0; }
@@ -104,13 +108,10 @@ img { display: block; max-width: 100%; }
 .lookbook-copy .button-dark { background: var(--ink); }
 .lookbook-index { margin-top: 70px; display: flex; gap: 12px; font: 11px var(--mono); }
 .lookbook-index span:first-child { color: var(--acid); }
-.lookbook-product-wall { display: grid; grid-template-columns: 1.08fr .92fr; grid-template-rows: repeat(2, minmax(230px, 1fr)); gap: 12px; min-height: 600px; }
-.fit-card { min-width: 0; min-height: 0; margin: 0; position: relative; overflow: hidden; background: var(--bone); }
-.fit-card-tall { grid-row: span 2; }
-.fit-card-offset { transform: translateY(24px); }
-.fit-card img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s cubic-bezier(.2,.7,.2,1); }
-.fit-card:hover img { transform: scale(1.04); }
-.fit-card figcaption { position: absolute; right: 10px; bottom: 10px; left: 10px; width: fit-content; padding: 7px 9px; background: var(--acid); color: var(--ink); font: 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.fit-study-image { min-height: 600px; margin: 0; position: relative; overflow: hidden; background: var(--bone); }
+.fit-study-image img { width: 100%; height: 100%; object-fit: cover; object-position: center; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+.fit-study-image:hover img { transform: scale(1.025); }
+.fit-study-image figcaption { position: absolute; right: 12px; bottom: 12px; padding: 7px 9px; background: var(--acid); color: var(--ink); font: 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
 
 .about-section { min-height: 590px; padding: clamp(70px, 9vw, 130px) 5.5vw; position: relative; display: grid; grid-template-columns: 1fr 2fr; gap: 40px; overflow: hidden; background: var(--ink); color: var(--paper); }
 .about-aside { margin: 0; font: 10px/1.7 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
@@ -182,8 +183,7 @@ img { display: block; max-width: 100%; }
   .lookbook-section { grid-template-columns: 1fr; }
   .lookbook-copy { max-width: none; }
   .lookbook-index { margin-top: 35px; }
-  .lookbook-product-wall { min-height: 560px; }
-  .fit-card-offset { transform: none; }
+  .fit-study-image { min-height: 560px; }
   .about-section { grid-template-columns: 1fr; min-height: 520px; }
   .about-aside { margin-bottom: 28px; }
   .footer-top { grid-template-columns: 1fr; padding-bottom: 50px; }
@@ -222,8 +222,8 @@ img { display: block; max-width: 100%; }
   .quick-view-trigger { opacity: 1; transform: none; }
   .lookbook-section { padding: 72px 20px; }
   .lookbook-copy h2 { font-size: clamp(50px, 16vw, 66px); letter-spacing: -.08em; }
-  .lookbook-product-wall { min-height: 440px; grid-template-rows: repeat(2, minmax(180px, 1fr)); gap: 8px; }
-  .fit-card figcaption { right: 6px; bottom: 6px; left: 6px; padding: 6px 7px; font-size: 8px; }
+  .fit-study-image { min-height: 420px; }
+  .fit-study-image figcaption { right: 6px; bottom: 6px; padding: 6px 7px; font-size: 8px; }
   .about-section { padding: 72px 20px; }
   .about-main h2 { font-size: clamp(50px, 15vw, 72px); letter-spacing: -.08em; }
   .site-footer { padding: 44px 20px 18px; }

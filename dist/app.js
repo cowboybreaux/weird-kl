@@ -6,19 +6,22 @@ const products = [
 ];
 
 const heroStories = [
-  { video: './assets/teasers/teaser-01-ajib.mp4', poster: './assets/products/wierd-ws-01.png', label: 'Teaser 01 / Ajib', eyebrow: 'Drop 001 / Ajib', title: 'Keep it<br /><em>weird.</em>', description: 'A first look at the WIERD system in motion.' },
-  { video: './assets/teasers/teaser-02-cahaya.mp4', poster: './assets/products/wierd-ws-02.png', label: 'Teaser 02 / Cahaya', eyebrow: 'Drop 001 / Cahaya', title: 'Wear the<br /><em>signal.</em>', description: 'Bright colour, hard lines, and a little room to be off-centre.' },
-  { video: './assets/teasers/teaser-03-dayah.mp4', poster: './assets/products/wierd-ws-03.png', label: 'Teaser 03 / Dayah', eyebrow: 'Drop 001 / Dayah', title: 'Made for<br /><em>the in-between.</em>', description: 'Four tops for the parts of the day that do not need a uniform.' },
-  { video: './assets/teasers/teaser-04-azi.mp4', poster: './assets/products/wierd-ws-04.png', label: 'Teaser 04 / Azi', eyebrow: 'Drop 001 / Azi', title: 'Stay<br /><em>off-centre.</em>', description: 'A campaign in four movements, made in Kuala Lumpur.' }
+  { video: './assets/teasers/teaser-01-ajib.mp4', poster: './assets/products/wierd-ws-01.png', label: 'Teaser 01 / Ajib', eyebrow: 'Drop 001 / Ajib', title: 'FOR THE<br /><em>WEIRDOS.</em>', description: 'A first look at the WIERD system in motion.' },
+  { video: './assets/teasers/teaser-02-cahaya.mp4', poster: './assets/products/wierd-ws-02.png', label: 'Teaser 02 / Cahaya', eyebrow: 'Drop 001 / Cahaya', title: 'FOR THE<br /><em>WEIRDOS.</em>', description: 'Bright colour, hard lines, and a little room to be off-centre.' },
+  { video: './assets/teasers/teaser-03-dayah.mp4', poster: './assets/products/wierd-ws-03.png', label: 'Teaser 03 / Dayah', eyebrow: 'Drop 001 / Dayah', title: 'FOR THE<br /><em>WEIRDOS.</em>', description: 'Four tops for the parts of the day that do not need a uniform.' },
+  { video: './assets/teasers/teaser-04-azi.mp4', poster: './assets/products/wierd-ws-04.png', label: 'Teaser 04 / Azi', eyebrow: 'Drop 001 / Azi', title: 'FOR THE<br /><em>WEIRDOS.</em>', description: 'A campaign in four movements, made in Kuala Lumpur.' }
 ];
 
 const state = {
   cart: [],
   heroIndex: 0,
   heroTimer: null,
+  activeVideoId: 'a',
+  videoTransitionToken: 0,
   quickViewId: null,
   selectedSize: 'S',
-  reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  heroInitialized: false
 };
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -40,6 +43,14 @@ function renderProducts() {
   `).join('');
 }
 
+function getVideo(id = state.activeVideoId) {
+  return $(`#hero-video-${id}`);
+}
+
+function getIncomingVideo() {
+  return getVideo(state.activeVideoId === 'a' ? 'b' : 'a');
+}
+
 function scheduleHeroRotation() {
   window.clearInterval(state.heroTimer);
   state.heroTimer = null;
@@ -49,30 +60,32 @@ function scheduleHeroRotation() {
   }, 5000);
 }
 
-function showVideoFallback() {
-  $('#hero-video').classList.add('is-fallback');
+function showVideoFallback(video) {
+  if (video !== getVideo()) return;
+  video.classList.add('is-fallback');
   $('#hero-image').classList.add('is-visible');
 }
 
-function setHero(index, { resetTimer = true } = {}) {
-  const story = heroStories[index];
-  if (!story) return;
-  state.heroIndex = index;
-  const video = $('#hero-video');
-  const source = $('#hero-video-source');
-  const poster = $('#hero-image');
-  video.classList.remove('is-fallback');
-  poster.classList.remove('is-visible');
+function loadVideo(video, story) {
+  const source = $('source', video);
   video.poster = story.poster;
-  poster.src = story.poster;
-  poster.alt = `${story.label} campaign poster`;
   source.src = story.video;
   video.load();
-  if (state.reducedMotion) {
-    video.pause();
-  } else {
-    video.play().catch(showVideoFallback);
-  }
+}
+
+function clearVideo(video) {
+  video.pause();
+  const source = $('source', video);
+  source.removeAttribute('src');
+  video.load();
+  video.classList.remove('is-active', 'is-fallback');
+}
+
+function updateHeroCopy(story, index) {
+  const copy = $('.hero-copy');
+  copy.classList.remove('is-switching');
+  void copy.offsetWidth;
+  copy.classList.add('is-switching');
   $('#hero-eyebrow').textContent = story.eyebrow;
   $('#hero-title').innerHTML = story.title;
   $('#hero-description').textContent = story.description;
@@ -82,6 +95,44 @@ function setHero(index, { resetTimer = true } = {}) {
     tab.classList.toggle('is-active', active);
     tab.setAttribute('aria-selected', String(active));
   });
+}
+
+function crossfadeTo(story, incoming, outgoing, token) {
+  if (token !== state.videoTransitionToken) return;
+  incoming.classList.remove('is-fallback');
+  incoming.classList.add('is-active');
+  outgoing.classList.remove('is-active');
+  state.activeVideoId = incoming.id.endsWith('-a') ? 'a' : 'b';
+  incoming.play().catch(() => showVideoFallback(incoming));
+  window.setTimeout(() => {
+    if (token === state.videoTransitionToken) clearVideo(outgoing);
+  }, 780);
+}
+
+function setHero(index, { resetTimer = true } = {}) {
+  const story = heroStories[index];
+  if (!story) return;
+  state.heroIndex = index;
+  updateHeroCopy(story, index);
+  const active = getVideo();
+  const incoming = getIncomingVideo();
+  $('#hero-image').src = story.poster;
+  $('#hero-image').alt = `${story.label} campaign poster`;
+  $('#hero-image').classList.remove('is-visible');
+
+  if (!state.heroInitialized) {
+    active.classList.add('is-active');
+    loadVideo(active, story);
+    state.heroInitialized = true;
+    if (state.reducedMotion) active.pause();
+    else active.play().catch(() => showVideoFallback(active));
+  } else if (index !== state.heroIndexBeforeTransition) {
+    const token = ++state.videoTransitionToken;
+    incoming.classList.remove('is-active', 'is-fallback');
+    loadVideo(incoming, story);
+    incoming.addEventListener('canplay', () => crossfadeTo(story, incoming, active, token), { once: true });
+  }
+  state.heroIndexBeforeTransition = index;
   if (resetTimer) scheduleHeroRotation();
 }
 
@@ -184,11 +235,15 @@ $('#newsletter-form').addEventListener('submit', (event) => {
   $('#form-message').textContent = 'You’re on the list. See you on the weird side.';
   event.target.reset();
 });
-$('#hero-video').addEventListener('canplay', () => {
-  $('#hero-video').classList.remove('is-fallback');
-  $('#hero-image').classList.remove('is-visible');
+$$('.hero-video').forEach((video) => {
+  video.addEventListener('canplay', () => {
+    if (video === getVideo()) {
+      video.classList.remove('is-fallback');
+      $('#hero-image').classList.remove('is-visible');
+    }
+  });
+  video.addEventListener('error', () => showVideoFallback(video));
 });
-$('#hero-video').addEventListener('error', showVideoFallback);
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') {
     closePanels();
@@ -201,7 +256,7 @@ window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener?.('change
   if (state.reducedMotion) {
     window.clearInterval(state.heroTimer);
     state.heroTimer = null;
-    $('#hero-video').pause();
+    getVideo().pause();
   } else {
     setHero(state.heroIndex);
   }
