@@ -27,12 +27,66 @@ const menuToggle = $('.menu-toggle');
 const backdrop = $('#modal-backdrop');
 const panels = [$('#quick-view'), $('#cart-drawer')];
 const state = {
+  accessGranted: false,
   cart: [], quickViewId: null, selectedSize: 'S', menuOpen: false,
   heroIndex: 0, displayedIndex: -1, activeVideo: videos[0],
   heroVisible: hero.getBoundingClientRect().bottom > 0 && hero.getBoundingClientRect().top < window.innerHeight,
   heroTimer: null, heroAbort: null, pendingVideo: null, heroToken: 0, videoCleanup: null,
   panel: null, closingPanel: false, panelOpener: null, panelTimer: null, lockedY: null, bodyStyle: null
 };
+
+// This is a client-side preview gate, not server-side authentication.
+const accessSessionKey = 'wierd-preview-access-v1';
+function unlockSite({ remembered = false } = {}) {
+  state.accessGranted = true;
+  $('#access-password').value = '';
+  $('#access-gate').hidden = true;
+  shell.hidden = false;
+  shell.inert = false;
+  shell.removeAttribute('aria-hidden');
+  $('.skip-link').hidden = false;
+  document.body.classList.remove('is-locked');
+  try { sessionStorage.setItem(accessSessionKey, 'granted'); } catch { /* Access still works when storage is unavailable. */ }
+  updateChromeHeight();
+  updateHeroDescriptionHeight();
+  window.requestAnimationFrame(() => {
+    let anchor = null;
+    try { anchor = document.getElementById(decodeURIComponent(window.location.hash.slice(1))); } catch { /* Ignore malformed fragments. */ }
+    if (anchor) anchor.scrollIntoView({ behavior: 'instant' });
+    else if (!remembered) window.scrollTo({ top: 0, behavior: 'instant' });
+    updateScrollChrome();
+    const rect = hero.getBoundingClientRect();
+    state.heroVisible = rect.bottom > measuredChromeHeight && rect.top < window.innerHeight;
+    syncHeroActivity();
+    if (!remembered) $('.site-header .wordmark').focus({ preventScroll: true });
+  });
+}
+function initializeAccessGate() {
+  const form = $('#access-form');
+  const input = $('#access-password');
+  const error = $('#access-error');
+  input.disabled = false;
+  $('.access-submit').disabled = false;
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    if (input.value === 'ayamgoreng') {
+      unlockSite();
+      return;
+    }
+    error.textContent = input.value ? 'Wrong password. Try again.' : 'Enter the password.';
+    input.setAttribute('aria-invalid', 'true');
+    input.focus();
+    input.select();
+  });
+  input.addEventListener('input', () => {
+    input.removeAttribute('aria-invalid');
+    error.textContent = '';
+  });
+  let remembered = false;
+  try { remembered = sessionStorage.getItem(accessSessionKey) === 'granted'; } catch { /* Show the gate when storage is blocked. */ }
+  if (remembered) unlockSite({ remembered: true });
+  else if (!mobile.matches) input.focus({ preventScroll: true });
+}
 
 function renderProducts() {
   $('#product-grid').innerHTML = products.map((product, index) => [
@@ -92,7 +146,7 @@ if ('ResizeObserver' in window) new ResizeObserver(updateChromeHeight).observe(c
 window.addEventListener('resize', updateChromeHeight, { passive: true });
 
 function heroCanPlay() {
-  return !motion.matches && state.heroVisible && !document.hidden && !state.menuOpen && !state.panel && !state.closingPanel;
+  return state.accessGranted && !motion.matches && state.heroVisible && !document.hidden && !state.menuOpen && !state.panel && !state.closingPanel;
 }
 function stopHeroTimer() {
   window.clearTimeout(state.heroTimer);
@@ -440,4 +494,4 @@ updateHeroDescriptionHeight();
 if ('ResizeObserver' in window) new ResizeObserver(updateHeroDescriptionHeight).observe($('#hero-description'));
 window.addEventListener('resize', updateHeroDescriptionHeight, { passive: true });
 document.fonts?.ready.then(updateHeroDescriptionHeight);
-setHero(0);
+initializeAccessGate();

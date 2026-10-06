@@ -10,11 +10,22 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./styles.css?v=polish-20261006" />
+    <link rel="stylesheet" href="./styles.css?v=gate-minimal-20261006" />
   </head>
-  <body id="top">
-    <a class="skip-link" href="#main-content">Skip to content</a>
-    <div class="site-shell">
+  <body id="top" class="is-locked">
+    <main class="access-gate" id="access-gate" aria-labelledby="access-title">
+      <div class="access-inner">
+        <h1 class="access-brand" id="access-title"><img class="access-logo" src="./assets/brand/wierd-logo.png" alt="wierdotcom" width="759" height="144" /></h1>
+        <form class="access-form" id="access-form" novalidate>
+          <input id="access-password" name="password" type="password" placeholder="PASSWORD" aria-label="Password" autocomplete="current-password" autocapitalize="none" spellcheck="false" enterkeyhint="go" aria-describedby="access-error" required disabled />
+          <button class="access-submit" type="submit" disabled>Enter WIERD</button>
+          <p class="access-error" id="access-error" role="status" aria-live="polite" aria-atomic="true"></p>
+        </form>
+        <noscript><p>Enable JavaScript to enter the website.</p></noscript>
+      </div>
+    </main>
+    <a class="skip-link" href="#main-content" hidden>Skip to content</a>
+    <div class="site-shell" hidden inert aria-hidden="true">
       <div class="site-chrome">
         <div class="announcement-bar" role="region" aria-label="Drop announcement">
           <span>DROP 001 / LIVE NOW</span>
@@ -162,6 +173,6 @@
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
-    <script src="./app.js?v=polish-20261006" defer></script>
+    <script src="./app.js?v=gate-20261006" defer></script>
   </body>
 </html>

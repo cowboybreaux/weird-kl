@@ -27,6 +27,18 @@ button:disabled { cursor: default; }
 :focus-visible { outline: 3px solid var(--blue); outline-offset: 4px; }
 .hero :focus-visible, .product-section :focus-visible, .about-section :focus-visible, .site-footer :focus-visible { outline-color: var(--acid); }
 [hidden] { display: none !important; }
+body.is-locked { background: var(--blue); color: var(--paper); }
+.access-gate { display: grid; place-items: center; min-height: 100svh; padding: clamp(24px, 6vw, 72px); }
+.access-inner { width: min(420px, 100%); min-width: 0; }
+.access-brand { margin: 0 0 36px; }
+.access-logo { width: 166px; height: auto; margin: 0 auto; filter: brightness(0) invert(1); }
+.access-form input { width: 100%; min-width: 0; min-height: 52px; padding: 13px 16px; border: 1px solid var(--paper); border-radius: 0; background: var(--paper); color: var(--ink); font-size: 1rem; }
+.access-form input::placeholder { color: #515667; opacity: 1; font: .875rem var(--mono); letter-spacing: .04em; }
+.access-form input[aria-invalid="true"] { border-color: var(--acid); outline: 2px solid var(--acid); outline-offset: 2px; }
+.access-submit { display: block; width: 100%; min-height: 52px; margin-top: 14px; padding: 13px 16px; border: 1px solid var(--acid); background: var(--acid); color: var(--ink); font: 500 .875rem/1.5 var(--mono); text-transform: uppercase; letter-spacing: .04em; }
+.access-submit:hover { background: var(--paper); border-color: var(--paper); }
+.access-error { min-height: 1.5em; margin: 12px 0 0; color: var(--acid); font-size: .875rem; line-height: 1.5; }
+.access-gate :focus-visible { outline-color: var(--paper); }
 .skip-link { position: fixed; z-index: 50; left: 16px; top: 12px; padding: 12px 18px; background: var(--acid); color: var(--ink); transform: translateY(-150%); }
 .skip-link:focus { transform: none; }
 .site-shell { overflow: visible; }
