@@ -1,237 +1,86 @@
+'use strict';
+
 const products = [
   { id: 'ws-01', name: 'WS-01 / Pink Polo — SS', sleeve: 'SS', price: 289, image: './assets/products/wierd-ws-01.png', description: 'A bright pink top with a layered attitude and a Kuala Lumpur campus signal.' },
   { id: 'ws-02', name: 'WS-02 / Pink Polo — LS', sleeve: 'LS', price: 299, image: './assets/products/wierd-ws-02.png', description: 'A soft pink top with a crisp collar, built for warm streets and late plans.' },
   { id: 'ws-03', name: 'WS-03 / Navy Polo — SS', sleeve: 'SS', price: 289, image: './assets/products/wierd-ws-03.png', description: 'A deep navy top with bright contrast details and a clean athletic cut.' },
   { id: 'ws-04', name: 'WS-04 / Navy Polo — LS', sleeve: 'LS', price: 319, image: './assets/products/wierd-ws-04.png', description: 'A navy top with a relaxed body, contrast collar, and room to move.' }
 ];
-
 const heroStories = [
-  { video: './assets/teasers/teaser-01-ajib.mp4', poster: './assets/products/wierd-ws-01.png', label: 'Teaser 01 / Ajib', eyebrow: 'Drop 001 / Ajib', title: 'FOR THE<br /><em>WEIRDOS.</em>', description: 'A first look at the WIERD system in motion.' },
-  { video: './assets/teasers/teaser-02-cahaya.mp4', poster: './assets/products/wierd-ws-02.png', label: 'Teaser 02 / Cahaya', eyebrow: 'Drop 001 / Cahaya', title: 'FOR THE<br /><em>WEIRDOS.</em>', description: 'Bright colour, hard lines, and a little room to be off-centre.' },
-  { video: './assets/teasers/teaser-03-dayah.mp4', poster: './assets/products/wierd-ws-03.png', label: 'Teaser 03 / Dayah', eyebrow: 'Drop 001 / Dayah', title: 'FOR THE<br /><em>WEIRDOS.</em>', description: 'Four tops for the parts of the day that do not need a uniform.' },
-  { video: './assets/teasers/teaser-04-azi.mp4', poster: './assets/products/wierd-ws-04.png', label: 'Teaser 04 / Azi', eyebrow: 'Drop 001 / Azi', title: 'FOR THE<br /><em>WEIRDOS.</em>', description: 'A campaign in four movements, made in Kuala Lumpur.' }
+  { video: './assets/teasers/teaser-01-ajib-web.mp4', poster: products[0].image, label: 'Ajib', description: 'A first look at the WIERD system in motion.' },
+  { video: './assets/teasers/teaser-02-cahaya-web.mp4', poster: products[1].image, label: 'Cahaya', description: 'Bright colour, hard lines, and a little room to be off-centre.' },
+  { video: './assets/teasers/teaser-03-dayah-web.mp4', poster: products[2].image, label: 'Dayah', description: 'Four tops for the parts of the day that do not need a uniform.' },
+  { video: './assets/teasers/teaser-04-azi-web.mp4', poster: products[3].image, label: 'Azi', description: 'A campaign in four movements, made in Kuala Lumpur.' }
 ];
-
-const state = {
-  cart: [],
-  heroIndex: 0,
-  heroTimer: null,
-  activeVideoId: 'a',
-  videoTransitionToken: 0,
-  quickViewId: null,
-  selectedSize: 'S',
-  reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-  heroInitialized: false
-};
 const $ = (selector, root = document) => root.querySelector(selector);
-const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
-const money = (value) => `RM ${value.toFixed(2)}`;
+const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+const money = (value) => 'RM ' + value.toFixed(2);
+const webImage = (path) => path.replace(/\.png$/, '.webp');
+const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const mobile = window.matchMedia('(max-width: 900px)');
+const hero = $('#drop');
+const videos = $$('.hero-video');
+const chrome = $('.site-chrome');
+const shell = $('.site-shell');
+const menu = $('#mobile-nav');
+const menuToggle = $('.menu-toggle');
+const backdrop = $('#modal-backdrop');
+const panels = [$('#quick-view'), $('#cart-drawer')];
+const state = {
+  cart: [], quickViewId: null, selectedSize: 'S', menuOpen: false,
+  heroIndex: 0, displayedIndex: -1, activeVideo: videos[0],
+  heroVisible: hero.getBoundingClientRect().bottom > 0 && hero.getBoundingClientRect().top < window.innerHeight,
+  heroTimer: null, heroAbort: null, pendingVideo: null, heroToken: 0, videoCleanup: null,
+  panel: null, closingPanel: false, panelOpener: null, panelTimer: null, lockedY: null, bodyStyle: null
+};
 
 function renderProducts() {
-  $('#product-grid').innerHTML = products.map((product, index) => `
-    <article class="product-card">
-      <div class="product-image">
-        <img src="${product.image}" alt="${product.name}" loading="${index < 2 ? 'eager' : 'lazy'}" />
-        ${index === 0 ? '<span class="product-tag">Drop 001</span>' : ''}
-        <button class="quick-view-trigger" type="button" data-action="quick-view" data-product-id="${product.id}">View piece</button>
-      </div>
-      <div class="product-info">
-        <div><p class="product-name">${product.name}</p><p class="product-meta">${product.sleeve}</p></div>
-        <p class="product-price">${money(product.price)}</p>
-      </div>
-    </article>
-  `).join('');
+  $('#product-grid').innerHTML = products.map((product, index) => [
+    '<article class="product-card">',
+    '<button class="product-image" type="button" data-action="quick-view" data-product-id="' + product.id + '" aria-label="View ' + product.name + '">',
+    '<picture><source srcset="' + webImage(product.image) + '" type="image/webp" /><img src="' + product.image + '" alt="' + product.name + '" width="800" height="800" loading="lazy" decoding="async" /></picture>',
+    index === 0 ? '<span class="product-tag">Drop 001</span>' : '',
+    '<span class="quick-view-trigger">View piece</span></button>',
+    '<div class="product-info"><div class="product-detail-row"><p class="product-code">' + product.id.toUpperCase() + ' / ' + product.sleeve + '</p>',
+    '<p class="product-price">' + money(product.price) + '</p></div>',
+    '<h3 class="product-name">' + product.name.split(' / ')[1].split(' — ')[0] + '</h3></div></article>'
+  ].join('')).join('');
 }
 
-function getVideo(id = state.activeVideoId) {
-  return $(`#hero-video-${id}`);
+let measuredChromeHeight = 0;
+let heroObserver = null;
+function updateChromeHeight() {
+  const height = Math.ceil(chrome.getBoundingClientRect().height);
+  if (height === measuredChromeHeight) return;
+  measuredChromeHeight = height;
+  document.documentElement.style.setProperty('--chrome-height', height + 'px');
+  observeHeroVisibility();
 }
-
-function getIncomingVideo() {
-  return getVideo(state.activeVideoId === 'a' ? 'b' : 'a');
-}
-
-function scheduleHeroRotation() {
-  window.clearInterval(state.heroTimer);
-  state.heroTimer = null;
-  if (state.reducedMotion) return;
-  state.heroTimer = window.setInterval(() => {
-    setHero((state.heroIndex + 1) % heroStories.length, { resetTimer: false });
-  }, 5000);
-}
-
-function showVideoFallback(video) {
-  if (video !== getVideo()) return;
-  video.classList.add('is-fallback');
-  $('#hero-image').classList.add('is-visible');
-}
-
-function loadVideo(video, story) {
-  const source = $('source', video);
-  video.poster = story.poster;
-  source.src = story.video;
-  video.load();
-}
-
-function clearVideo(video) {
-  video.pause();
-  const source = $('source', video);
-  source.removeAttribute('src');
-  video.load();
-  video.classList.remove('is-active', 'is-fallback');
-}
-
-function updateHeroCopy(story, index) {
-  $('#hero-eyebrow').textContent = story.eyebrow;
-  $('#hero-description').textContent = story.description;
-  $('#hero-index').textContent = `${String(index + 1).padStart(2, '0')} / ${String(heroStories.length).padStart(2, '0')}`;
-  $$('.hero-tab').forEach((tab, tabIndex) => {
-    const active = tabIndex === index;
-    tab.classList.toggle('is-active', active);
-    tab.setAttribute('aria-selected', String(active));
+let copyMeasureKey = '';
+function updateHeroDescriptionHeight() {
+  const description = $('#hero-description');
+  const style = getComputedStyle(description);
+  const width = description.getBoundingClientRect().width;
+  const key = [width, style.font, style.minHeight].join('|');
+  if (!width || key === copyMeasureKey) return;
+  copyMeasureKey = key;
+  const probe = description.cloneNode(false);
+  probe.removeAttribute('id');
+  probe.setAttribute('aria-hidden', 'true');
+  Object.assign(probe.style, { position: 'absolute', visibility: 'hidden', pointerEvents: 'none', width: width + 'px', height: 'auto', minHeight: '0', margin: '0' });
+  description.parentElement.append(probe);
+  let height = parseFloat(style.minHeight) || 0;
+  heroStories.forEach(story => {
+    probe.textContent = story.description;
+    height = Math.max(height, probe.getBoundingClientRect().height);
   });
+  probe.remove();
+  description.style.height = Math.ceil(height) + 'px';
 }
-
-function crossfadeTo(story, incoming, outgoing, token) {
-  if (token !== state.videoTransitionToken) return;
-  incoming.classList.remove('is-fallback');
-  incoming.classList.add('is-active');
-  outgoing.classList.remove('is-active');
-  state.activeVideoId = incoming.id.endsWith('-a') ? 'a' : 'b';
-  incoming.play().catch(() => showVideoFallback(incoming));
-  window.setTimeout(() => {
-    if (token === state.videoTransitionToken) clearVideo(outgoing);
-  }, 780);
-}
-
-function setHero(index, { resetTimer = true } = {}) {
-  const story = heroStories[index];
-  if (!story) return;
-  state.heroIndex = index;
-  updateHeroCopy(story, index);
-  const active = getVideo();
-  const incoming = getIncomingVideo();
-  $('#hero-image').src = story.poster;
-  $('#hero-image').alt = `${story.label} campaign poster`;
-  $('#hero-image').classList.remove('is-visible');
-
-  if (!state.heroInitialized) {
-    active.classList.add('is-active');
-    loadVideo(active, story);
-    state.heroInitialized = true;
-    if (state.reducedMotion) active.pause();
-    else active.play().catch(() => showVideoFallback(active));
-  } else if (index !== state.heroIndexBeforeTransition) {
-    const token = ++state.videoTransitionToken;
-    incoming.classList.remove('is-active', 'is-fallback');
-    loadVideo(incoming, story);
-    incoming.addEventListener('canplay', () => crossfadeTo(story, incoming, active, token), { once: true });
-  }
-  state.heroIndexBeforeTransition = index;
-  if (resetTimer) scheduleHeroRotation();
-}
-
-function setMenuOpen(isOpen) {
-  const nav = $('#mobile-nav');
-  const toggle = $('.menu-toggle');
-  nav.classList.toggle('is-open', isOpen);
-  nav.setAttribute('aria-hidden', String(!isOpen));
-  nav.inert = !isOpen;
-  toggle.setAttribute('aria-expanded', String(isOpen));
-  toggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
-}
-
-function openPanel(panel) {
-  $('#modal-backdrop').hidden = false;
-  panel.hidden = false;
-  document.body.style.overflow = 'hidden';
-}
-
-function closePanels() {
-  $('#modal-backdrop').hidden = true;
-  $('#quick-view').hidden = true;
-  $('#cart-drawer').hidden = true;
-  document.body.style.overflow = '';
-}
-
-function openQuickView(productId) {
-  const product = products.find((item) => item.id === productId);
-  if (!product) return;
-  state.quickViewId = productId;
-  state.selectedSize = 'S';
-  $('#quick-view-image').src = product.image;
-  $('#quick-view-image').alt = product.name;
-  $('#quick-view-category').textContent = `Top / ${product.sleeve}`;
-  $('#quick-view-title').textContent = product.name;
-  $('#quick-view-price').textContent = money(product.price);
-  $('#quick-view-description').textContent = product.description;
-  $$('.size-option').forEach((option) => option.classList.toggle('is-active', option.dataset.size === state.selectedSize));
-  openPanel($('#quick-view'));
-  window.setTimeout(() => $('.size-option')?.focus(), 20);
-}
-
-function updateCart() {
-  const count = state.cart.length;
-  const subtotal = state.cart.reduce((sum, item) => sum + item.price, 0);
-  $$('.cart-count').forEach((element) => { element.textContent = count; });
-  $('.drawer-count').textContent = count;
-  $('#cart-total').textContent = money(subtotal);
-  $('#cart-items').innerHTML = count === 0 ? '<p class="empty-cart">Your bag is currently empty.</p>' : state.cart.map((item, index) => `
-    <article class="cart-item">
-      <img src="${item.image}" alt="${item.name}" />
-      <div><p class="cart-item-name">${item.name}</p><p class="cart-item-meta">${item.sleeve} / Size ${item.size}</p><button class="remove-item" type="button" data-action="remove-item" data-cart-index="${index}">Remove</button></div>
-      <span class="cart-item-price">${money(item.price)}</span>
-    </article>
-  `).join('');
-}
-
-function addToCart() {
-  const product = products.find((item) => item.id === state.quickViewId);
-  if (!product) return;
-  state.cart.push({ ...product, size: state.selectedSize });
-  updateCart();
-  closePanels();
-  showToast(`${product.name} / size ${state.selectedSize} added to bag`);
-}
-
-function showToast(message) {
-  const toast = $('#toast');
-  toast.textContent = message;
-  toast.classList.add('is-visible');
-  window.clearTimeout(showToast.timeout);
-  showToast.timeout = window.setTimeout(() => toast.classList.remove('is-visible'), 3200);
-}
-
-document.addEventListener('click', (event) => {
-  const target = event.target.closest('[data-action], [data-hero-tab]');
-  if (!target) return;
-  const action = target.dataset.action;
-  if (target.dataset.heroTab) setHero(Number(target.dataset.heroTab));
-  if (action === 'menu') setMenuOpen(!$('#mobile-nav').classList.contains('is-open'));
-  if (action === 'quick-view') openQuickView(target.dataset.productId);
-  if (action === 'close-quick-view' || action === 'close-cart') closePanels();
-  if (action === 'open-cart') { updateCart(); openPanel($('#cart-drawer')); }
-  if (action === 'add-to-cart') addToCart();
-  if (action === 'remove-item') {
-    state.cart.splice(Number(target.dataset.cartIndex), 1);
-    updateCart();
-  }
-});
-
-$('#modal-backdrop').addEventListener('click', closePanels);
-$$('.size-option').forEach((option) => option.addEventListener('click', () => {
-  state.selectedSize = option.dataset.size;
-  $$('.size-option').forEach((item) => item.classList.toggle('is-active', item === option));
-}));
-
-const announcementBar = $('.announcement-bar');
-const siteHeader = $('.site-header');
-let scrollFrame = null;
 function updateScrollChrome() {
-  const isScrolled = window.scrollY > 12;
-  announcementBar.classList.toggle('is-scrolled', isScrolled);
-  siteHeader.classList.toggle('is-scrolled', isScrolled);
+  chrome.classList.toggle('is-scrolled', (state.lockedY ?? window.scrollY) > 12);
 }
+let scrollFrame = null;
 window.addEventListener('scroll', () => {
   if (scrollFrame !== null) return;
   scrollFrame = window.requestAnimationFrame(() => {
@@ -239,36 +88,356 @@ window.addEventListener('scroll', () => {
     updateScrollChrome();
   });
 }, { passive: true });
-updateScrollChrome();
+if ('ResizeObserver' in window) new ResizeObserver(updateChromeHeight).observe(chrome);
+window.addEventListener('resize', updateChromeHeight, { passive: true });
 
-$$('.hero-video').forEach((video) => {
-  video.addEventListener('canplay', () => {
-    if (video === getVideo()) {
-      video.classList.remove('is-fallback');
-      $('#hero-image').classList.remove('is-visible');
-    }
-  });
-  video.addEventListener('error', () => showVideoFallback(video));
-});
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape') {
-    closePanels();
-    setMenuOpen(false);
+function heroCanPlay() {
+  return !motion.matches && state.heroVisible && !document.hidden && !state.menuOpen && !state.panel && !state.closingPanel;
+}
+function stopHeroTimer() {
+  window.clearTimeout(state.heroTimer);
+  state.heroTimer = null;
+}
+function scheduleHeroRotation() {
+  stopHeroTimer();
+  if (!heroCanPlay()) return;
+  state.heroTimer = window.setTimeout(() => setHero((state.heroIndex + 1) % heroStories.length), 5000);
+}
+function clearVideo(video) {
+  video.pause();
+  video.classList.remove('is-active', 'is-current');
+  if (video.hasAttribute('src')) {
+    video.removeAttribute('src');
+    video.load();
   }
-});
-$$('.mobile-nav a').forEach((link) => link.addEventListener('click', () => setMenuOpen(false)));
-window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener?.('change', (event) => {
-  state.reducedMotion = event.matches;
-  if (state.reducedMotion) {
-    window.clearInterval(state.heroTimer);
-    state.heroTimer = null;
-    getVideo().pause();
+}
+function cancelPendingVideo() {
+  ++state.heroToken;
+  state.heroAbort?.abort();
+  state.heroAbort = null;
+  if (state.pendingVideo && state.pendingVideo !== state.activeVideo) clearVideo(state.pendingVideo);
+  state.pendingVideo = null;
+  window.clearTimeout(state.videoCleanup);
+  videos.filter(video => video !== state.activeVideo).forEach(clearVideo);
+}
+function updateHeroCopy(index) {
+  const story = heroStories[index];
+  $('#hero-eyebrow').textContent = 'Drop 001 / ' + story.label;
+  $('#hero-description').textContent = story.description;
+  $('#hero-index').textContent = String(index + 1).padStart(2, '0') + ' / 04';
+  $('#hero-image').src = story.poster;
+  $('#hero-image').alt = 'WIERD campaign, ' + story.label + ' / Drop 001';
+  $('#hero-poster-source').srcset = webImage(story.poster);
+  hero.dataset.activeStory = String(index);
+  $$('.hero-tab').forEach((tab, tabIndex) => {
+    tab.classList.toggle('is-active', tabIndex === index);
+    tab.setAttribute('aria-pressed', String(tabIndex === index));
+  });
+  state.displayedIndex = index;
+}
+function showPoster(index) {
+  videos.forEach(clearVideo);
+  updateHeroCopy(index);
+  $('#hero-poster').classList.add('is-visible');
+  scheduleHeroRotation();
+}
+function waitForPlayable(video, signal) {
+  return new Promise((resolve, reject) => {
+    let timeout;
+    const finish = (error) => {
+      window.clearTimeout(timeout);
+      video.removeEventListener('canplay', ready);
+      video.removeEventListener('error', failed);
+      signal.removeEventListener('abort', aborted);
+      if (error) reject(error); else resolve();
+    };
+    const ready = () => finish();
+    const failed = () => finish(new Error('Video unavailable'));
+    const aborted = () => finish(new DOMException('Cancelled', 'AbortError'));
+    video.addEventListener('canplay', ready, { once: true });
+    video.addEventListener('error', failed, { once: true });
+    signal.addEventListener('abort', aborted, { once: true });
+    timeout = window.setTimeout(failed, 8000);
+    if (signal.aborted) aborted();
+    else if (video.readyState >= 3) ready();
+  });
+}
+function waitForFrame(video) {
+  if (!video.requestVideoFrameCallback) return new Promise(resolve => window.requestAnimationFrame(resolve));
+  return new Promise(resolve => {
+    const timeout = window.setTimeout(resolve, 500);
+    video.requestVideoFrameCallback(() => { window.clearTimeout(timeout); resolve(); });
+  });
+}
+async function setHero(index) {
+  if (!heroStories[index]) return;
+  stopHeroTimer();
+  cancelPendingVideo();
+  state.heroIndex = index;
+  if (!heroCanPlay()) {
+    showPoster(index);
+    return;
+  }
+  if (index === state.displayedIndex && state.activeVideo.hasAttribute('src') && state.activeVideo.readyState >= 2) {
+    try { await state.activeVideo.play(); } catch { showPoster(index); }
+    scheduleHeroRotation();
+    return;
+  }
+  const incoming = videos.find(video => video !== state.activeVideo);
+  const outgoing = state.activeVideo;
+  const token = state.heroToken;
+  const controller = new AbortController();
+  state.heroAbort = controller;
+  state.pendingVideo = incoming;
+  incoming.muted = true;
+  incoming.poster = webImage(heroStories[index].poster);
+  incoming.src = heroStories[index].video;
+  const ready = waitForPlayable(incoming, controller.signal);
+  incoming.load();
+  try {
+    await ready;
+    if (token !== state.heroToken || !heroCanPlay()) return;
+    await incoming.play();
+    await waitForFrame(incoming);
+    if (token !== state.heroToken || !heroCanPlay()) return;
+    updateHeroCopy(index);
+    outgoing.classList.remove('is-current');
+    incoming.classList.add('is-active', 'is-current');
+    state.activeVideo = incoming;
+    state.pendingVideo = null;
+    state.heroAbort = null;
+    state.videoCleanup = window.setTimeout(() => {
+      if (token !== state.heroToken) return;
+      clearVideo(outgoing);
+      $('#hero-poster').classList.remove('is-visible');
+    }, 650);
+    scheduleHeroRotation();
+  } catch (error) {
+    if (error.name === 'AbortError' || token !== state.heroToken) return;
+    state.pendingVideo = null;
+    state.heroAbort = null;
+    showPoster(index);
+  }
+}
+function syncHeroActivity() {
+  if (!heroCanPlay()) {
+    stopHeroTimer();
+    cancelPendingVideo();
+    videos.forEach(video => video.pause());
+    if (motion.matches) showPoster(state.heroIndex);
   } else {
     setHero(state.heroIndex);
   }
-});
+}
+videos.forEach(video => video.addEventListener('error', () => {
+  if (video === state.activeVideo && !state.pendingVideo) showPoster(state.heroIndex);
+}));
+function observeHeroVisibility() {
+  if (!('IntersectionObserver' in window)) return;
+  heroObserver?.disconnect();
+  heroObserver = new IntersectionObserver(entries => {
+    const visible = entries[0].isIntersecting;
+    if (state.heroVisible === visible) return;
+    state.heroVisible = visible;
+    syncHeroActivity();
+  }, { threshold: 0, rootMargin: '-' + measuredChromeHeight + 'px 0px 0px 0px' });
+  heroObserver.observe(hero);
+}
+document.addEventListener('visibilitychange', syncHeroActivity);
+motion.addEventListener('change', syncHeroActivity);
 
+function setMenuOpen(isOpen, { restoreFocus = false, focusFirst = false } = {}) {
+  state.menuOpen = Boolean(isOpen && mobile.matches);
+  menu.classList.toggle('is-open', state.menuOpen);
+  menu.inert = !state.menuOpen;
+  menu.setAttribute('aria-hidden', String(!state.menuOpen));
+  menuToggle.setAttribute('aria-expanded', String(state.menuOpen));
+  menuToggle.setAttribute('aria-label', state.menuOpen ? 'Close menu' : 'Open menu');
+  if (state.menuOpen && focusFirst) $('a', menu).focus({ preventScroll: true });
+  if (!state.menuOpen && restoreFocus) menuToggle.focus({ preventScroll: true });
+  syncHeroActivity();
+}
+mobile.addEventListener('change', () => setMenuOpen(false));
+
+function lockPage() {
+  if (state.lockedY !== null) return;
+  state.lockedY = window.scrollY;
+  state.bodyStyle = document.body.getAttribute('style');
+  Object.assign(document.body.style, { position: 'fixed', top: '-' + state.lockedY + 'px', left: '0', right: '0', width: '100%', overflow: 'hidden' });
+}
+function unlockPage() {
+  if (state.lockedY === null) return;
+  const y = state.lockedY;
+  if (state.bodyStyle === null) document.body.removeAttribute('style');
+  else document.body.setAttribute('style', state.bodyStyle);
+  const previous = document.documentElement.style.scrollBehavior;
+  document.documentElement.style.scrollBehavior = 'auto';
+  window.scrollTo(0, y);
+  document.documentElement.style.scrollBehavior = previous;
+  state.lockedY = null;
+  updateScrollChrome();
+}
+function openPanel(panel, opener) {
+  window.clearTimeout(state.panelTimer);
+  window.clearTimeout(showToast.timeout);
+  $('#toast').classList.remove('is-visible');
+  state.closingPanel = false;
+  if (state.menuOpen) setMenuOpen(false);
+  state.panelOpener = opener || document.activeElement;
+  panels.forEach(other => {
+    other.classList.remove('is-open');
+    other.hidden = other !== panel;
+    other.inert = other !== panel;
+  });
+  state.panel = panel;
+  backdrop.hidden = false;
+  lockPage();
+  shell.inert = true;
+  $('.skip-link').inert = true;
+  void panel.offsetWidth;
+  backdrop.classList.add('is-open');
+  panel.classList.add('is-open');
+  $('.panel-close', panel).focus({ preventScroll: true });
+  syncHeroActivity();
+}
+function closePanels({ restoreFocus = true } = {}) {
+  if (!state.panel || state.closingPanel) return;
+  const panel = state.panel;
+  const opener = state.panelOpener;
+  state.closingPanel = true;
+  panel.classList.remove('is-open');
+  backdrop.classList.remove('is-open');
+  panel.inert = true;
+  state.panelTimer = window.setTimeout(() => {
+    panels.forEach(item => { item.hidden = true; item.inert = false; });
+    backdrop.hidden = true;
+    shell.inert = false;
+    $('.skip-link').inert = false;
+    state.panel = null;
+    state.closingPanel = false;
+    unlockPage();
+    if (restoreFocus && opener?.isConnected) opener.focus({ preventScroll: true });
+    syncHeroActivity();
+  }, motion.matches ? 0 : 280);
+}
+function openQuickView(productId, opener) {
+  const product = products.find(item => item.id === productId);
+  if (!product) return;
+  state.quickViewId = productId;
+  state.selectedSize = 'S';
+  $('#quick-view-image').src = product.image;
+  $('#quick-view-image').alt = product.name;
+  $('#quick-view-source').srcset = webImage(product.image);
+  $('#quick-view-category').textContent = product.id.toUpperCase() + ' / ' + product.sleeve;
+  $('#quick-view-title').textContent = product.name.split(' / ')[1];
+  $('#quick-view-price').textContent = money(product.price);
+  $('#quick-view-description').textContent = product.description;
+  updateSizeSelection();
+  openPanel($('#quick-view'), opener);
+}
+function updateSizeSelection() {
+  $$('.size-option').forEach(option => {
+    const active = option.dataset.size === state.selectedSize;
+    option.classList.toggle('is-active', active);
+    option.setAttribute('aria-pressed', String(active));
+  });
+}
+function updateCart() {
+  const count = state.cart.length;
+  $('.cart-count').textContent = count;
+  $('.cart-button').setAttribute('aria-label', 'Open bag, ' + count + (count === 1 ? ' piece' : ' pieces'));
+  $('.drawer-count').textContent = count;
+  $('#cart-total').textContent = money(state.cart.reduce((sum, item) => sum + item.price, 0));
+  $('#cart-items').innerHTML = count === 0 ?
+    '<div class="empty-cart"><p>Your bag is empty.<br />Find your piece in Drop 001.</p><a class="button button-dark" href="#shop" data-action="browse-pieces">Explore the pieces</a></div>' :
+    state.cart.map((item, index) => [
+      '<article class="cart-item"><picture><source srcset="' + webImage(item.image) + '" type="image/webp" /><img src="' + item.image + '" alt="' + item.name + '" width="800" height="800" /></picture>',
+      '<div><p class="cart-item-name">' + item.name + '</p><p class="cart-item-meta">' + item.sleeve + ' / Size ' + item.size + '</p>',
+      '<div class="cart-item-bottom"><span class="cart-item-price">' + money(item.price) + '</span><button class="remove-item" type="button" data-action="remove-item" data-cart-index="' + index + '" aria-label="Remove ' + item.name + ', size ' + item.size + '">Remove</button></div></div></article>'
+    ].join('')).join('');
+}
+function showToast(message) {
+  const toast = $('#toast');
+  toast.textContent = message;
+  toast.classList.add('is-visible');
+  window.clearTimeout(showToast.timeout);
+  showToast.timeout = window.setTimeout(() => toast.classList.remove('is-visible'), 3600);
+}
+
+document.addEventListener('click', event => {
+  const target = event.target.closest('[data-action], [data-hero-tab], [data-size]');
+  if (state.menuOpen && !menu.contains(event.target) && !menuToggle.contains(event.target)) setMenuOpen(false);
+  const navLink = event.target.closest('.mobile-nav a');
+  if (navLink) setMenuOpen(false);
+  if (!target) return;
+  if (target.hasAttribute('data-hero-tab')) setHero(Number(target.dataset.heroTab));
+  if (target.dataset.size) { state.selectedSize = target.dataset.size; updateSizeSelection(); }
+  switch (target.dataset.action) {
+    case 'menu': setMenuOpen(!state.menuOpen, { focusFirst: event.detail === 0 }); break;
+    case 'quick-view': openQuickView(target.dataset.productId, target); break;
+    case 'close-panel': closePanels(); break;
+    case 'open-cart': updateCart(); openPanel($('#cart-drawer'), target); break;
+    case 'add-to-cart': {
+      const product = products.find(item => item.id === state.quickViewId);
+      if (!product) break;
+      state.cart.push({ ...product, size: state.selectedSize });
+      updateCart();
+      closePanels();
+      showToast(product.name + ' / Size ' + state.selectedSize + ' added to bag');
+      break;
+    }
+    case 'remove-item': {
+      const index = Number(target.dataset.cartIndex);
+      state.cart.splice(index, 1);
+      updateCart();
+      const removeButtons = $$('.remove-item');
+      (removeButtons[Math.min(index, removeButtons.length - 1)] || $('.panel-close', state.panel)).focus({ preventScroll: true });
+      break;
+    }
+    case 'browse-pieces':
+      event.preventDefault();
+      closePanels({ restoreFocus: false });
+      window.setTimeout(() => {
+        $('#shop').scrollIntoView({ behavior: motion.matches ? 'auto' : 'smooth' });
+        $('.product-image').focus({ preventScroll: true });
+      }, motion.matches ? 0 : 285);
+      break;
+  }
+});
+backdrop.addEventListener('click', () => closePanels());
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') {
+    if (state.panel) closePanels();
+    else if (state.menuOpen) setMenuOpen(false, { restoreFocus: true });
+  }
+  if (state.panel && event.key === 'Tab') {
+    const focusable = $$('button, a[href], [tabindex="0"]', state.panel).filter(item => !item.disabled && item.getClientRects().length);
+    const first = focusable[0], last = focusable[focusable.length - 1];
+    if (!first) { event.preventDefault(); state.panel.focus(); return; }
+    if (event.shiftKey && (document.activeElement === first || !state.panel.contains(document.activeElement))) {
+      event.preventDefault(); last.focus();
+    } else if (!event.shiftKey && (document.activeElement === last || !state.panel.contains(document.activeElement))) {
+      event.preventDefault(); first.focus();
+    }
+  }
+  const tab = event.target.closest('.hero-tab');
+  if (tab && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
+    event.preventDefault();
+    const current = Number(tab.dataset.heroTab);
+    const index = event.key === 'Home' ? 0 : event.key === 'End' ? 3 : (current + (event.key === 'ArrowRight' ? 1 : 3)) % 4;
+    $$('.hero-tab')[index].focus({ preventScroll: true });
+    setHero(index);
+  }
+});
+document.addEventListener('focusin', event => {
+  if (state.panel && !state.closingPanel && !state.panel.contains(event.target)) $('.panel-close', state.panel).focus({ preventScroll: true });
+});
 renderProducts();
 updateCart();
-setMenuOpen(false);
+updateChromeHeight();
+updateScrollChrome();
+updateHeroDescriptionHeight();
+if ('ResizeObserver' in window) new ResizeObserver(updateHeroDescriptionHeight).observe($('#hero-description'));
+window.addEventListener('resize', updateHeroDescriptionHeight, { passive: true });
+document.fonts?.ready.then(updateHeroDescriptionHeight);
 setHero(0);

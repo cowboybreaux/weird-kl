@@ -3,54 +3,55 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="wierd — clothes for people who don't fit the brief." />
-    <title>wierd — the fit study</title>
+    <meta name="description" content="WIERD, an independent Kuala Lumpur label. Explore Drop 001: four tops, pink and navy, SS and LS. For the weirdos." />
+    <meta name="theme-color" content="#2457ff" />
+    <title>wierd — for the weirdos</title>
     <link rel="icon" type="image/png" href="./assets/brand/wierd-icon.png" />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css?v=polish-20261006" />
   </head>
-  <body>
+  <body id="top">
+    <a class="skip-link" href="#main-content">Skip to content</a>
     <div class="site-shell">
-      <div class="announcement-bar">
-        <span>DROP 001 / LIVE NOW</span>
-        <span class="announcement-center">FREE SHIPPING OVER RM250</span>
-        <span>KL / MY <span class="status-dot" aria-hidden="true"></span></span>
-      </div>
-
-      <header class="site-header" id="top">
-        <a class="wordmark" href="#top" aria-label="wierd home"><img class="wordmark-image" src="./assets/brand/wierd-logo.png" alt="wierdkl" /></a>
-        <nav class="desktop-nav" aria-label="Primary navigation">
-          <a href="#shop">Shop</a>
-          <a href="#drop">Drop 001</a>
-          <a href="#lookbook">Lookbook</a>
-          <a href="#about">About</a>
-        </nav>
-        <div class="header-actions">
-          <button class="cart-button" type="button" data-action="open-cart" aria-label="Open cart">
-            Cart <span class="cart-count" aria-live="polite">0</span>
-          </button>
-          <button class="menu-toggle" type="button" data-action="menu" aria-label="Open menu" aria-expanded="false">
-            <span></span><span></span>
-          </button>
+      <div class="site-chrome">
+        <div class="announcement-bar" role="region" aria-label="Drop announcement">
+          <span>DROP 001 / LIVE NOW</span>
+          <span class="announcement-center">FOUR PIECES / SS + LS</span>
+          <span>KL / MY</span>
         </div>
-      </header>
-
-      <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" aria-hidden="true">
-        <a href="#shop">Shop</a>
-        <a href="#drop">Drop 001</a>
-        <a href="#lookbook">Lookbook</a>
-        <a href="#about">About</a>
+        <header class="site-header">
+          <a class="wordmark" href="#top" aria-label="WIERD home"><img class="wordmark-image" src="./assets/brand/wierd-logo.png" alt="wierd" width="759" height="144" /></a>
+          <nav class="desktop-nav" aria-label="Primary navigation">
+            <a href="#shop">Shop</a><a href="#drop">Drop 001</a><a href="#lookbook">Lookbook</a><a href="#about">About</a>
+          </nav>
+          <div class="header-actions">
+            <button class="cart-button" type="button" data-action="open-cart" aria-label="Open bag, 0 pieces">
+              Bag <span class="cart-count" aria-hidden="true">0</span>
+            </button>
+            <button class="menu-toggle" type="button" data-action="menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
+              <span></span><span></span>
+            </button>
+          </div>
+        </header>
+      </div>
+      <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" aria-hidden="true" inert>
+        <a href="#shop"><span aria-hidden="true">01</span>Shop</a>
+        <a href="#drop"><span aria-hidden="true">02</span>Drop 001</a>
+        <a href="#lookbook"><span aria-hidden="true">03</span>Lookbook</a>
+        <a href="#about"><span aria-hidden="true">04</span>About</a>
       </nav>
 
-      <main>
-        <section class="hero" aria-labelledby="hero-title">
+      <main id="main-content" tabindex="-1">
+        <section class="hero" id="drop" aria-labelledby="hero-title">
           <div class="hero-media">
-            <img id="hero-image" src="./assets/products/wierd-ws-01.png" alt="WIERD campaign poster" />
-            <video id="hero-video-a" class="hero-video is-active" muted autoplay loop playsinline preload="metadata" poster="./assets/products/wierd-ws-01.png" aria-label="WIERD campaign teaser">
-              <source id="hero-video-source-a" type="video/mp4" />
-            </video>
-            <video id="hero-video-b" class="hero-video" muted loop playsinline preload="none" poster="./assets/products/wierd-ws-01.png" aria-hidden="true">
-              <source id="hero-video-source-b" type="video/mp4" />
-            </video>
+            <picture class="hero-poster is-visible" id="hero-poster">
+              <source id="hero-poster-source" srcset="./assets/products/wierd-ws-01.webp" type="image/webp" />
+              <img id="hero-image" src="./assets/products/wierd-ws-01.png" alt="WIERD campaign, Ajib wearing WS-01" width="800" height="800" fetchpriority="high" />
+            </picture>
+            <video id="hero-video-a" class="hero-video" muted loop playsinline preload="none" aria-hidden="true"></video>
+            <video id="hero-video-b" class="hero-video" muted loop playsinline preload="none" aria-hidden="true"></video>
             <div class="hero-shade"></div>
           </div>
           <div class="hero-grid">
@@ -58,51 +59,43 @@
               <p class="eyebrow" id="hero-eyebrow">Drop 001 / Ajib</p>
               <h1 id="hero-title">FOR THE<br /><em>WEIRDOS.</em></h1>
               <p class="hero-description" id="hero-description">A first look at the WIERD system in motion.</p>
-              <div class="hero-cta-row">
-                <a class="text-link light-link" href="#shop">Shop the drop <span aria-hidden="true">↗</span></a>
-              </div>
+              <a class="hero-cta" href="#shop">Shop the drop <span aria-hidden="true">↗</span></a>
             </div>
-            <div class="hero-meta">
-              <span id="hero-index">01 / 04</span>
-              <span>Made for the in-between</span>
-            </div>
+            <div class="hero-meta"><span id="hero-index">01 / 04</span><span>Kuala Lumpur / Drop 001</span></div>
           </div>
-          <div class="hero-tabs" role="tablist" aria-label="Featured stories">
-            <button class="hero-tab is-active" type="button" data-hero-tab="0" role="tab" aria-selected="true">01 / Ajib</button>
-            <button class="hero-tab" type="button" data-hero-tab="1" role="tab" aria-selected="false">02 / Cahaya</button>
-            <button class="hero-tab" type="button" data-hero-tab="2" role="tab" aria-selected="false">03 / Dayah</button>
-            <button class="hero-tab" type="button" data-hero-tab="3" role="tab" aria-selected="false">04 / Azi</button>
+          <div class="hero-tabs" role="group" aria-label="Choose a campaign teaser">
+            <button class="hero-tab is-active" type="button" data-hero-tab="0" aria-pressed="true"><span>01</span>Ajib</button>
+            <button class="hero-tab" type="button" data-hero-tab="1" aria-pressed="false"><span>02</span>Cahaya</button>
+            <button class="hero-tab" type="button" data-hero-tab="2" aria-pressed="false"><span>03</span>Dayah</button>
+            <button class="hero-tab" type="button" data-hero-tab="3" aria-pressed="false"><span>04</span>Azi</button>
           </div>
         </section>
 
         <section class="manifesto-bar" aria-label="Brand statement">
-          <p>WIERD IS A CLOTHING SYSTEM FOR THE OFF-CENTERED.</p>
-          <p>Designed in KL. Worn everywhere.</p>
-          <span class="manifesto-mark" aria-hidden="true">✳</span>
+          <p>A CLOTHING SYSTEM FOR THE OFF-CENTERED.</p><p>Designed in KL. Worn everywhere.</p><span aria-hidden="true">✳</span>
         </section>
 
         <section class="section product-section" id="shop" aria-labelledby="drop-title">
           <div class="section-heading">
-            <div>
-              <p class="eyebrow">Drop 001 / 04 tops</p>
-              <h2 id="drop-title">The pieces.</h2>
-            </div>
-            <div class="section-heading-aside">
-              <p>Four tops, built for long days and longer nights. Take a closer look, then keep it in the bag.</p>
-            </div>
+            <div><p class="eyebrow">Drop 001 / 04 tops</p><h2 id="drop-title">The pieces.</h2></div>
+            <div class="section-heading-aside"><p>Pink or navy. SS or LS.<br />Four ways to wear WIERD.</p></div>
           </div>
           <div class="product-grid" id="product-grid"></div>
+          <noscript><p>Enable JavaScript to explore the four pieces and use the demo bag.</p></noscript>
         </section>
 
-        <section class="section lookbook-section" id="lookbook" aria-labelledby="lookbook-title">
+        <section class="lookbook-section" id="lookbook" aria-labelledby="lookbook-title">
           <div class="lookbook-copy">
             <p class="eyebrow">Editorial / Fit study</p>
             <h2 id="lookbook-title">The fit<br /><span>study.</span></h2>
-            <p>Four tops. Two sleeve codes. One system for moving through the day without dressing like the plan went right.</p>
+            <p>Four tops. Two sleeve codes. Worn your own way, from the first plan to the last change of mind.</p>
             <a class="button button-dark" href="#shop">Shop the drop</a>
-            <div class="lookbook-index"><span>01</span><span>/</span><span>04</span></div>
+            <p class="lookbook-index">WS-01 — WS-04 / SS + LS</p>
           </div>
-          <figure class="fit-study-image"><img src="./assets/products/wierd-ws-08.png" alt="WIERD WS-08 group campaign image" loading="lazy" /><figcaption>WS-08 / Group study</figcaption></figure>
+          <figure class="fit-study-image">
+            <picture><source srcset="./assets/products/wierd-ws-08.webp" type="image/webp" /><img src="./assets/products/wierd-ws-08.png" alt="Four WIERD models wearing pink and navy tops in the WS-08 group fit study" width="800" height="800" loading="lazy" decoding="async" /></picture>
+            <figcaption>WS-08 / Group study</figcaption>
+          </figure>
         </section>
 
         <section class="about-section" id="about" aria-labelledby="about-title">
@@ -110,8 +103,8 @@
           <div class="about-main">
             <p class="eyebrow">About the label</p>
             <h2 id="about-title">For the people<br />between categories.</h2>
-            <p>We make considered clothes for unconsidered days. Wierd is a small independent label built around utility, movement, and the good kind of not knowing what happens next.</p>
-            <a class="text-link light-link" href="#footer">Keep in touch <span aria-hidden="true">↗</span></a>
+            <p>An independent label from Kuala Lumpur. Clothes for the everyday, with enough room to do things your own way.</p>
+            <a class="text-link" href="#footer">Keep in touch <span aria-hidden="true">↗</span></a>
           </div>
           <span class="about-glyph" aria-hidden="true">W</span>
         </section>
@@ -120,63 +113,55 @@
       <footer class="site-footer" id="footer">
         <div class="footer-top">
           <div>
-            <a class="wordmark wordmark-footer" href="#top"><img class="wordmark-image" src="./assets/brand/wierd-logo.png" alt="wierdkl" /></a>
+            <a class="wordmark wordmark-footer" href="#top" aria-label="WIERD home"><img class="wordmark-image" src="./assets/brand/wierd-logo.png" alt="wierd" width="759" height="144" loading="lazy" /></a>
             <p class="footer-tagline">Made in KL.<br />Worn everywhere.</p>
           </div>
-          <div class="newsletter-form telegram-cta">
+          <div class="telegram-cta">
             <p class="telegram-kicker">Get the next weird thing</p>
-            <a class="telegram-link" href="https://t.me/wierdupdate" target="_blank" rel="noopener noreferrer" aria-label="Open WIERD updates on Telegram">
-              <span class="telegram-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" role="img">
-                  <path d="M21.6 4.2 18.4 19c-.24 1.04-.86 1.3-1.75.82l-4.84-3.57-2.34 2.25c-.26.26-.48.48-.98.48l.35-4.94 8.98-8.11c.39-.35-.09-.54-.61-.19L6.1 12.4l-4.78-1.5c-1.04-.33-1.06-1.04.22-1.54L20.24 2.1c.86-.32 1.61.2 1.36 2.1Z"></path>
-                </svg>
-              </span>
-              <span>Join @wierdupdate</span>
-              <span class="telegram-arrow" aria-hidden="true">↗</span>
+            <a class="telegram-link" href="https://t.me/wierdupdate" target="_blank" rel="noopener noreferrer" aria-label="Join WIERD updates on Telegram, opens in a new tab">
+              <span class="telegram-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21.6 4.2 18.4 19c-.24 1.04-.86 1.3-1.75.82l-4.84-3.57-2.34 2.25c-.26.26-.48.48-.98.48l.35-4.94 8.98-8.11c.39-.35-.09-.54-.61-.19L6.1 12.4l-4.78-1.5c-1.04-.33-1.06-1.04.22-1.54L20.24 2.1c.86-.32 1.61.2 1.36 2.1Z" /></svg></span>
+              <span>Join @wierdupdate</span><span class="telegram-arrow" aria-hidden="true">↗</span>
             </a>
           </div>
         </div>
         <div class="footer-bottom">
           <span>© 2026 WIERD STUDIO</span>
-          <div class="footer-links"><a href="#about">Shipping</a><a href="#about">Returns</a><a href="#about">Contact</a></div>
+          <nav class="footer-links" aria-label="Footer navigation"><a href="#shop">The pieces</a><a href="#lookbook">Fit study</a><a href="https://t.me/wierdupdate" target="_blank" rel="noopener noreferrer">Contact / Telegram</a></nav>
           <span>MYR / EN</span>
         </div>
       </footer>
     </div>
 
     <div class="modal-backdrop" id="modal-backdrop" hidden></div>
-    <aside class="quick-view" id="quick-view" aria-labelledby="quick-view-title" aria-modal="true" role="dialog" hidden>
-      <button class="panel-close" type="button" data-action="close-quick-view" aria-label="Close product details">×</button>
-      <div class="quick-view-image"><img id="quick-view-image" src="./assets/products/wierd-ws-01.png" alt="" /></div>
+    <div class="quick-view" id="quick-view" aria-labelledby="quick-view-title" aria-modal="true" role="dialog" tabindex="-1" hidden>
+      <button class="panel-close" type="button" data-action="close-panel" aria-label="Close product details">×</button>
+      <div class="quick-view-image"><picture><source id="quick-view-source" type="image/webp" /><img id="quick-view-image" alt="" width="800" height="800" /></picture></div>
       <div class="quick-view-body">
-        <p class="eyebrow" id="quick-view-category">Top / Drop 001</p>
-        <h2 id="quick-view-title">Product</h2>
-        <p class="quick-view-price" id="quick-view-price">RM 0.00</p>
-        <p id="quick-view-description">A top for the in-between.</p>
+        <p class="eyebrow" id="quick-view-category"></p>
+        <h2 id="quick-view-title"></h2>
+        <p class="quick-view-price" id="quick-view-price"></p>
+        <p id="quick-view-description"></p>
         <div class="size-picker">
-          <span>Size</span>
-          <div class="size-options" role="group" aria-label="Choose a size">
-            <button type="button" class="size-option is-active" data-size="S">S</button>
-            <button type="button" class="size-option" data-size="M">M</button>
-            <button type="button" class="size-option" data-size="L">L</button>
-            <button type="button" class="size-option" data-size="XL">XL</button>
+          <span id="size-label">Choose a size</span>
+          <div class="size-options" role="group" aria-labelledby="size-label">
+            <button type="button" class="size-option is-active" data-size="S" aria-pressed="true">S</button>
+            <button type="button" class="size-option" data-size="M" aria-pressed="false">M</button>
+            <button type="button" class="size-option" data-size="L" aria-pressed="false">L</button>
+            <button type="button" class="size-option" data-size="XL" aria-pressed="false">XL</button>
           </div>
         </div>
         <button class="button button-dark button-full" type="button" data-action="add-to-cart">Add to bag</button>
-        <p class="panel-note">Demo only / no payment is collected</p>
+        <p class="panel-note">Demo bag / no payment is collected</p>
       </div>
-    </aside>
+    </div>
 
-    <aside class="cart-drawer" id="cart-drawer" aria-labelledby="cart-title" aria-modal="true" role="dialog" hidden>
-      <div class="drawer-header"><h2 id="cart-title">Your bag <span class="drawer-count">0</span></h2><button class="panel-close" type="button" data-action="close-cart" aria-label="Close cart">×</button></div>
+    <div class="cart-drawer" id="cart-drawer" aria-labelledby="cart-title" aria-modal="true" role="dialog" tabindex="-1" hidden>
+      <div class="drawer-header"><h2 id="cart-title">Your bag <span class="drawer-count">0</span></h2><button class="panel-close" type="button" data-action="close-panel" aria-label="Close bag">×</button></div>
       <div class="cart-items" id="cart-items"></div>
-      <div class="cart-footer">
-        <div class="cart-total"><span>Subtotal</span><strong id="cart-total">RM 0.00</strong></div>
-        <p class="panel-note" id="checkout-note">Showroom demo / checkout is not connected</p>
-      </div>
-    </aside>
+      <div class="cart-footer"><div class="cart-total"><span>Subtotal</span><strong id="cart-total">RM 0.00</strong></div><p class="panel-note">Showroom demo / checkout is not connected</p></div>
+    </div>
 
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="./app.js?v=cleanup-3" defer></script>
+    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+    <script src="./app.js?v=polish-20261006" defer></script>
   </body>
 </html>
