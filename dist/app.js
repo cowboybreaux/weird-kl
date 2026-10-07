@@ -7,10 +7,10 @@ const products = [
   { id: 'ws-04', name: 'WS-04 / Navy Polo — LS', sleeve: 'LS', price: 319, image: './assets/products/wierd-ws-04.png', description: 'A navy top with a relaxed body, contrast collar, and room to move.' }
 ];
 const heroStories = [
-  { video: './assets/teasers/teaser-01-ajib-web.mp4', poster: products[0].image, label: 'Ajib', description: 'A first look at the WIERD system in motion.' },
-  { video: './assets/teasers/teaser-02-cahaya-web.mp4', poster: products[1].image, label: 'Cahaya', description: 'Bright colour, hard lines, and a little room to be off-centre.' },
-  { video: './assets/teasers/teaser-03-dayah-web.mp4', poster: products[2].image, label: 'Dayah', description: 'Four tops for the parts of the day that do not need a uniform.' },
-  { video: './assets/teasers/teaser-04-azi-web.mp4', poster: products[3].image, label: 'Azi', description: 'A campaign in four movements, made in Kuala Lumpur.' }
+  { video: './assets/teasers/teaser-01-ajib-web.mp4', poster: products[0].image, label: 'Ajib' },
+  { video: './assets/teasers/teaser-02-cahaya-web.mp4', poster: products[1].image, label: 'Cahaya' },
+  { video: './assets/teasers/teaser-03-dayah-web.mp4', poster: products[2].image, label: 'Dayah' },
+  { video: './assets/teasers/teaser-04-azi-web.mp4', poster: products[3].image, label: 'Azi' }
 ];
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
@@ -21,6 +21,8 @@ const mobile = window.matchMedia('(max-width: 900px)');
 const hero = $('#drop');
 const videos = $$('.hero-video');
 const chrome = $('.site-chrome');
+const header = $('.site-header');
+const headerSections = $$('.hero, .manifesto-bar, .product-section, .lookbook-section, .site-footer');
 const shell = $('.site-shell');
 const menu = $('#mobile-nav');
 const menuToggle = $('.menu-toggle');
@@ -48,7 +50,6 @@ function unlockSite({ remembered = false } = {}) {
   document.body.classList.remove('is-locked');
   try { sessionStorage.setItem(accessSessionKey, 'granted'); } catch { /* Access still works when storage is unavailable. */ }
   updateChromeHeight();
-  updateHeroDescriptionHeight();
   window.requestAnimationFrame(() => {
     let anchor = null;
     try { anchor = document.getElementById(decodeURIComponent(window.location.hash.slice(1))); } catch { /* Ignore malformed fragments. */ }
@@ -105,34 +106,34 @@ let measuredChromeHeight = 0;
 let heroObserver = null;
 function updateChromeHeight() {
   const height = Math.ceil(chrome.getBoundingClientRect().height);
-  if (height === measuredChromeHeight) return;
-  measuredChromeHeight = height;
-  document.documentElement.style.setProperty('--chrome-height', height + 'px');
-  observeHeroVisibility();
-}
-let copyMeasureKey = '';
-function updateHeroDescriptionHeight() {
-  const description = $('#hero-description');
-  const style = getComputedStyle(description);
-  const width = description.getBoundingClientRect().width;
-  const key = [width, style.font, style.minHeight].join('|');
-  if (!width || key === copyMeasureKey) return;
-  copyMeasureKey = key;
-  const probe = description.cloneNode(false);
-  probe.removeAttribute('id');
-  probe.setAttribute('aria-hidden', 'true');
-  Object.assign(probe.style, { position: 'absolute', visibility: 'hidden', pointerEvents: 'none', width: width + 'px', height: 'auto', minHeight: '0', margin: '0' });
-  description.parentElement.append(probe);
-  let height = parseFloat(style.minHeight) || 0;
-  heroStories.forEach(story => {
-    probe.textContent = story.description;
-    height = Math.max(height, probe.getBoundingClientRect().height);
-  });
-  probe.remove();
-  description.style.height = Math.ceil(height) + 'px';
+  const headerHeight = header.getBoundingClientRect().height;
+  if (!height || !headerHeight) return;
+  document.documentElement.style.setProperty('--header-height', headerHeight + 'px');
+  if (height !== measuredChromeHeight) {
+    measuredChromeHeight = height;
+    document.documentElement.style.setProperty('--chrome-height', height + 'px');
+    observeHeroVisibility();
+  }
+  updateScrollChrome();
 }
 function updateScrollChrome() {
   chrome.classList.toggle('is-scrolled', (state.lockedY ?? window.scrollY) > 12);
+  if (!state.accessGranted || state.lockedY !== null) return;
+  const headerRect = header.getBoundingClientRect();
+  const sampleY = headerRect.top + headerRect.height / 2;
+  let darkArtwork = false;
+  for (const section of headerSections) {
+    const rect = section.getBoundingClientRect();
+    if (sampleY < rect.top || sampleY >= rect.bottom) continue;
+    darkArtwork = section.matches('.manifesto-bar, .lookbook-section');
+    if (section.matches('.product-section')) {
+      const fadeHeight = parseFloat(getComputedStyle(section, '::after').height) || 0;
+      // The eased fade becomes light enough for dark artwork before its halfway point.
+      darkArtwork = fadeHeight > 0 && sampleY >= rect.bottom - fadeHeight * .57;
+    }
+    break;
+  }
+  header.classList.toggle('has-dark-artwork', darkArtwork);
 }
 let scrollFrame = null;
 window.addEventListener('scroll', () => {
@@ -174,24 +175,17 @@ function cancelPendingVideo() {
   window.clearTimeout(state.videoCleanup);
   videos.filter(video => video !== state.activeVideo).forEach(clearVideo);
 }
-function updateHeroCopy(index) {
+function updateHeroState(index) {
   const story = heroStories[index];
-  $('#hero-eyebrow').textContent = 'Drop 001 / ' + story.label;
-  $('#hero-description').textContent = story.description;
-  $('#hero-index').textContent = String(index + 1).padStart(2, '0') + ' / 04';
   $('#hero-image').src = story.poster;
   $('#hero-image').alt = 'WIERD campaign, ' + story.label + ' / Drop 001';
   $('#hero-poster-source').srcset = webImage(story.poster);
   hero.dataset.activeStory = String(index);
-  $$('.hero-tab').forEach((tab, tabIndex) => {
-    tab.classList.toggle('is-active', tabIndex === index);
-    tab.setAttribute('aria-pressed', String(tabIndex === index));
-  });
   state.displayedIndex = index;
 }
 function showPoster(index) {
   videos.forEach(clearVideo);
-  updateHeroCopy(index);
+  updateHeroState(index);
   $('#hero-poster').classList.add('is-visible');
   scheduleHeroRotation();
 }
@@ -254,7 +248,7 @@ async function setHero(index) {
     await incoming.play();
     await waitForFrame(incoming);
     if (token !== state.heroToken || !heroCanPlay()) return;
-    updateHeroCopy(index);
+    updateHeroState(index);
     outgoing.classList.remove('is-current');
     incoming.classList.add('is-active', 'is-current');
     state.activeVideo = incoming;
@@ -303,6 +297,11 @@ motion.addEventListener('change', syncHeroActivity);
 function setMenuOpen(isOpen, { restoreFocus = false, focusFirst = false } = {}) {
   state.menuOpen = Boolean(isOpen && mobile.matches);
   menu.classList.toggle('is-open', state.menuOpen);
+  document.documentElement.classList.toggle('menu-is-open', state.menuOpen);
+  document.body.classList.toggle('menu-is-open', state.menuOpen);
+  $('#main-content').inert = state.menuOpen;
+  $('.site-footer').inert = state.menuOpen;
+  $('.skip-link').inert = state.menuOpen;
   menu.inert = !state.menuOpen;
   menu.setAttribute('aria-hidden', String(!state.menuOpen));
   menuToggle.setAttribute('aria-expanded', String(state.menuOpen));
@@ -398,7 +397,6 @@ function updateSizeSelection() {
 }
 function updateCart() {
   const count = state.cart.length;
-  $('.cart-count').textContent = count;
   $('.cart-button').setAttribute('aria-label', 'Open bag, ' + count + (count === 1 ? ' piece' : ' pieces'));
   $('.drawer-count').textContent = count;
   $('#cart-total').textContent = money(state.cart.reduce((sum, item) => sum + item.price, 0));
@@ -419,12 +417,15 @@ function showToast(message) {
 }
 
 document.addEventListener('click', event => {
-  const target = event.target.closest('[data-action], [data-hero-tab], [data-size]');
+  const target = event.target.closest('[data-action], [data-size]');
+  if (state.menuOpen && event.target === menu) {
+    setMenuOpen(false, { restoreFocus: true });
+    return;
+  }
   if (state.menuOpen && !menu.contains(event.target) && !menuToggle.contains(event.target)) setMenuOpen(false);
   const navLink = event.target.closest('.mobile-nav a');
   if (navLink) setMenuOpen(false);
   if (!target) return;
-  if (target.hasAttribute('data-hero-tab')) setHero(Number(target.dataset.heroTab));
   if (target.dataset.size) { state.selectedSize = target.dataset.size; updateSizeSelection(); }
   switch (target.dataset.action) {
     case 'menu': setMenuOpen(!state.menuOpen, { focusFirst: event.detail === 0 }); break;
@@ -474,14 +475,6 @@ document.addEventListener('keydown', event => {
       event.preventDefault(); first.focus();
     }
   }
-  const tab = event.target.closest('.hero-tab');
-  if (tab && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
-    event.preventDefault();
-    const current = Number(tab.dataset.heroTab);
-    const index = event.key === 'Home' ? 0 : event.key === 'End' ? 3 : (current + (event.key === 'ArrowRight' ? 1 : 3)) % 4;
-    $$('.hero-tab')[index].focus({ preventScroll: true });
-    setHero(index);
-  }
 });
 document.addEventListener('focusin', event => {
   if (state.panel && !state.closingPanel && !state.panel.contains(event.target)) $('.panel-close', state.panel).focus({ preventScroll: true });
@@ -490,8 +483,4 @@ renderProducts();
 updateCart();
 updateChromeHeight();
 updateScrollChrome();
-updateHeroDescriptionHeight();
-if ('ResizeObserver' in window) new ResizeObserver(updateHeroDescriptionHeight).observe($('#hero-description'));
-window.addEventListener('resize', updateHeroDescriptionHeight, { passive: true });
-document.fonts?.ready.then(updateHeroDescriptionHeight);
 initializeAccessGate();

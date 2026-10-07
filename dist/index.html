@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./styles.css?v=gate-minimal-20261006" />
+    <link rel="stylesheet" href="./styles.css?v=menu-copyright-20261007" />
   </head>
   <body id="top" class="is-locked">
     <main class="access-gate" id="access-gate" aria-labelledby="access-title">
@@ -27,35 +27,28 @@
     <a class="skip-link" href="#main-content" hidden>Skip to content</a>
     <div class="site-shell" hidden inert aria-hidden="true">
       <div class="site-chrome">
-        <div class="announcement-bar" role="region" aria-label="Drop announcement">
-          <span>DROP 001 / LIVE NOW</span>
-          <span class="announcement-center">FOUR PIECES / SS + LS</span>
-          <span>KL / MY</span>
-        </div>
         <header class="site-header">
-          <a class="wordmark" href="#top" aria-label="WIERD home"><img class="wordmark-image" src="./assets/brand/wierd-logo.png" alt="wierd" width="759" height="144" /></a>
           <nav class="desktop-nav" aria-label="Primary navigation">
-            <a href="#shop">Shop</a><a href="#drop">Drop 001</a><a href="#lookbook">Lookbook</a><a href="#about">About</a>
+            <a href="#shop">Shop</a><a href="#drop">Drop 001</a><a href="#lookbook">Lookbook</a>
           </nav>
-          <div class="header-actions">
-            <button class="cart-button" type="button" data-action="open-cart" aria-label="Open bag, 0 pieces">
-              Bag <span class="cart-count" aria-hidden="true">0</span>
-            </button>
-            <button class="menu-toggle" type="button" data-action="menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
-              <span></span><span></span>
-            </button>
-          </div>
+          <a class="wordmark" href="#top" aria-label="WIERD home"><img class="wordmark-image" src="./assets/brand/wierd-logo.png" alt="wierd" width="759" height="144" /></a>
+          <button class="cart-button" type="button" data-action="open-cart" aria-label="Open bag, 0 pieces">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 7h12l1 14H5L6 7Z" /><path d="M9 7V5a3 3 0 0 1 6 0v2" /></svg>
+          </button>
+          <button class="menu-toggle" type="button" data-action="menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
+            <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+          </button>
         </header>
       </div>
       <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" aria-hidden="true" inert>
-        <a href="#shop"><span aria-hidden="true">01</span>Shop</a>
-        <a href="#drop"><span aria-hidden="true">02</span>Drop 001</a>
-        <a href="#lookbook"><span aria-hidden="true">03</span>Lookbook</a>
-        <a href="#about"><span aria-hidden="true">04</span>About</a>
+        <a href="#shop">Shop</a>
+        <a href="#drop">Drop 001</a>
+        <a href="#lookbook">Lookbook</a>
+        <p class="mobile-nav-copyright">© 2026 WIERD</p>
       </nav>
 
       <main id="main-content" tabindex="-1">
-        <section class="hero" id="drop" aria-labelledby="hero-title">
+        <section class="hero" id="drop" aria-label="Drop 001 campaign">
           <div class="hero-media">
             <picture class="hero-poster is-visible" id="hero-poster">
               <source id="hero-poster-source" srcset="./assets/products/wierd-ws-01.webp" type="image/webp" />
@@ -63,23 +56,12 @@
             </picture>
             <video id="hero-video-a" class="hero-video" muted loop playsinline preload="none" aria-hidden="true"></video>
             <video id="hero-video-b" class="hero-video" muted loop playsinline preload="none" aria-hidden="true"></video>
-            <div class="hero-shade"></div>
           </div>
-          <div class="hero-grid">
-            <div class="hero-copy">
-              <p class="eyebrow" id="hero-eyebrow">Drop 001 / Ajib</p>
-              <h1 id="hero-title">FOR THE<br /><em>WEIRDOS.</em></h1>
-              <p class="hero-description" id="hero-description">A first look at the WIERD system in motion.</p>
-              <a class="hero-cta" href="#shop">Shop the drop <span aria-hidden="true">↗</span></a>
-            </div>
-            <div class="hero-meta"><span id="hero-index">01 / 04</span><span>Kuala Lumpur / Drop 001</span></div>
+          <div class="hero-rail">
+            <p class="hero-statement">FOR THE WEIRDOS.</p>
+            <a class="hero-cta" href="#shop">SHOP THE DROP</a>
           </div>
-          <div class="hero-tabs" role="group" aria-label="Choose a campaign teaser">
-            <button class="hero-tab is-active" type="button" data-hero-tab="0" aria-pressed="true"><span>01</span>Ajib</button>
-            <button class="hero-tab" type="button" data-hero-tab="1" aria-pressed="false"><span>02</span>Cahaya</button>
-            <button class="hero-tab" type="button" data-hero-tab="2" aria-pressed="false"><span>03</span>Dayah</button>
-            <button class="hero-tab" type="button" data-hero-tab="3" aria-pressed="false"><span>04</span>Azi</button>
-          </div>
+          <div class="hero-progress" aria-hidden="true"></div>
         </section>
 
         <section class="manifesto-bar" aria-label="Brand statement">
@@ -109,16 +91,6 @@
           </figure>
         </section>
 
-        <section class="about-section" id="about" aria-labelledby="about-title">
-          <p class="about-aside">WIERD / EST. 2026<br />KUALA LUMPUR, MY</p>
-          <div class="about-main">
-            <p class="eyebrow">About the label</p>
-            <h2 id="about-title">For the people<br />between categories.</h2>
-            <p>An independent label from Kuala Lumpur. Clothes for the everyday, with enough room to do things your own way.</p>
-            <a class="text-link" href="#footer">Keep in touch <span aria-hidden="true">↗</span></a>
-          </div>
-          <span class="about-glyph" aria-hidden="true">W</span>
-        </section>
       </main>
 
       <footer class="site-footer" id="footer">
@@ -127,18 +99,23 @@
             <a class="wordmark wordmark-footer" href="#top" aria-label="WIERD home"><img class="wordmark-image" src="./assets/brand/wierd-logo.png" alt="wierd" width="759" height="144" loading="lazy" /></a>
             <p class="footer-tagline">Made in KL.<br />Worn everywhere.</p>
           </div>
-          <div class="telegram-cta">
-            <p class="telegram-kicker">Get the next weird thing</p>
-            <a class="telegram-link" href="https://t.me/wierdupdate" target="_blank" rel="noopener noreferrer" aria-label="Join WIERD updates on Telegram, opens in a new tab">
-              <span class="telegram-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21.6 4.2 18.4 19c-.24 1.04-.86 1.3-1.75.82l-4.84-3.57-2.34 2.25c-.26.26-.48.48-.98.48l.35-4.94 8.98-8.11c.39-.35-.09-.54-.61-.19L6.1 12.4l-4.78-1.5c-1.04-.33-1.06-1.04.22-1.54L20.24 2.1c.86-.32 1.61.2 1.36 2.1Z" /></svg></span>
-              <span>Join @wierdupdate</span><span class="telegram-arrow" aria-hidden="true">↗</span>
-            </a>
+          <div class="footer-connect">
+            <nav class="footer-socials" aria-label="Follow WIERD">
+              <a class="social-link" href="https://t.me/wierdupdate" target="_blank" rel="noopener noreferrer" aria-label="WIERD on Telegram, opens in a new tab">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21.6 4.2 18.4 19c-.24 1.04-.86 1.3-1.75.82l-4.84-3.57-2.34 2.25c-.26.26-.48.48-.98.48l.35-4.94 8.98-8.11c.39-.35-.09-.54-.61-.19L6.1 12.4l-4.78-1.5c-1.04-.33-1.06-1.04.22-1.54L20.24 2.1c.86-.32 1.61.2 1.36 2.1Z" /></svg>
+              </a>
+              <a class="social-link" href="https://www.instagram.com/wierdotcom/" target="_blank" rel="noopener noreferrer" aria-label="WIERD on Instagram, opens in a new tab">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2" /><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2" /><circle cx="17.5" cy="6.5" r="1.2" /></svg>
+              </a>
+              <a class="social-link" href="https://www.threads.com/@wierdotcom" target="_blank" rel="noopener noreferrer" aria-label="WIERD on Threads, opens in a new tab">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18.263 11.097c-.03-3.486-1.92-5.586-5.111-5.586-2.13 0-3.922.963-4.863 2.499l2.062 1.438c.535-.843 1.272-1.543 2.628-1.543 1.528 0 2.318.85 2.544 2.431a15 15 0 0 0-2.236-.173c-4.125 0-6.068 1.867-6.068 4.336s1.943 3.99 4.804 3.99c3.139 0 5.013-2.115 5.781-4.735.798.361 1.348 1.204 1.348 2.47 0 3.387-3.907 5.232-7.22 5.232-4.885 0-8.077-3.207-8.077-8.424 0-6.392 4.223-10.487 9.9-10.487 3.808 0 5.69 1.671 6.97 3.914l2.108-1.475C21.44 2.078 18.331 0 13.663 0 6.227 0 1.168 5.277 1.168 12.934c0 7 4.953 11.066 10.856 11.066 4.878 0 9.809-2.846 9.809-7.716 0-2.545-1.46-4.231-3.569-5.187m-6.33 4.855c-1.077 0-2.026-.512-2.026-1.453 0-1.483 1.822-1.934 3.606-1.934.678 0 1.34.045 1.927.173-.422 1.927-1.671 3.215-3.508 3.214Z" /></svg>
+              </a>
+            </nav>
+            <span class="footer-locale">MYR / EN</span>
           </div>
         </div>
         <div class="footer-bottom">
           <span>© 2026 WIERD STUDIO</span>
-          <nav class="footer-links" aria-label="Footer navigation"><a href="#shop">The pieces</a><a href="#lookbook">Fit study</a><a href="https://t.me/wierdupdate" target="_blank" rel="noopener noreferrer">Contact / Telegram</a></nav>
-          <span>MYR / EN</span>
         </div>
       </footer>
     </div>
@@ -173,6 +150,6 @@
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
-    <script src="./app.js?v=gate-20261006" defer></script>
+    <script src="./app.js?v=fullscreen-menu-20261007" defer></script>
   </body>
 </html>
